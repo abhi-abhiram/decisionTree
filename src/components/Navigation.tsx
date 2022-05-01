@@ -1,19 +1,20 @@
-import { Button, ButtonGroup, Center, Link } from "@chakra-ui/react";
+import { Button, ButtonGroup, Center } from "@chakra-ui/react";
 import { Link as ReachLink } from "react-router-dom";
 
 const Nav: React.FC = () => {
   return (
     <Center h={"100%"}>
       <ButtonGroup>
-        <Button colorScheme="green" variant="solid">
-          <Link as={ReachLink} to="/tree">
-            Build Tree
-          </Link>
+        <Button
+          as={ReachLink}
+          to="buildTree"
+          colorScheme="green"
+          variant="solid"
+        >
+          Build Tree
         </Button>
-        <Button colorScheme="green" variant="outline">
-          <Link as={ReachLink} to="/tree">
-            Show Questions
-          </Link>
+        <Button as={ReachLink} colorScheme="green" variant="outline" to="/tree">
+          Show Questions
         </Button>
       </ButtonGroup>
     </Center>

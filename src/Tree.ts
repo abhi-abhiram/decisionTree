@@ -1,6 +1,6 @@
 export interface TreeProps {
   name: string;
-  answerFieldType: "dropdown" | "multipleChoice";
+  answerFieldType: "multipleChoice" | "textarea";
   question: string;
   answers?: string[];
   children?: TreeProps[];
@@ -8,52 +8,24 @@ export interface TreeProps {
 
 const Tree: TreeProps = {
   name: "root",
-  answerFieldType: "dropdown",
-  question: "what is your fav colour?",
-  answers: ["blue", "green", "yellow"],
+  answerFieldType: "multipleChoice",
+  question: "What is your favourite color?",
+  answers: ["Blue", "Green", "Red"],
   children: [
     {
       name: "blue",
-      answerFieldType: "dropdown",
-      question: "your fav color is blue",
-      answers: ["black", "pink", "red"],
-      children: [
-        {
-          name: "black",
-          answerFieldType: "dropdown",
-          question: "your fav color is blue",
-          answers: ["black", "pink", "red"],
-        },
-        {
-          name: "pink",
-          answerFieldType: "dropdown",
-          question: "your fav color is green",
-        },
-        {
-          name: "red",
-          answerFieldType: "dropdown",
-          question: "your fav color is yello",
-        },
-      ],
+      answerFieldType: "textarea",
+      question: "Ok, You like blue. Why you like blue?",
     },
     {
       name: "green",
-      answerFieldType: "dropdown",
-      question: "your fav color is green",
-      answers: ["blue", "green", "yellow"],
-      children: [
-        {
-          name: "black",
-          answerFieldType: "multipleChoice",
-          question: "your fav color is blue",
-          answers: ["black", "pink", "red"],
-        },
-      ],
+      answerFieldType: "textarea",
+      question: "Ok, You like green. Why you like green?",
     },
     {
-      name: "yellow",
-      answerFieldType: "dropdown",
-      question: "your fav color is yello",
+      name: "red",
+      answerFieldType: "textarea",
+      question: "Ok, You like red. Why you like red?",
     },
   ],
 };

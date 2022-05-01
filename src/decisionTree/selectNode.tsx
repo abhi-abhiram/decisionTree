@@ -1,8 +1,14 @@
-import { Button, Flex, FormControl, FormLabel } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-import { Dropdown } from "../components";
+import {
+  Button,
+  Flex,
+  FormControl,
+  FormLabel,
+  FormErrorMessage,
+} from "@chakra-ui/react";
+import { useState } from "react";
+import { MultipleChoice, TextArea } from "../components";
 import { TreeProps } from "../Tree";
-import addInput, { updateInput } from "../utils/addInput";
+import addInput from "../utils/addInput";
 
 interface props {
   Node: TreeProps;
@@ -11,7 +17,13 @@ interface props {
   setSubmitButton: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-let ans = "";
+function errorMessage(currentNode: TreeProps) {
+  if (currentNode.answerFieldType === "multipleChoice") {
+    return "Please select the option.";
+  } else {
+    return "Please enter the value.";
+  }
+}
 
 const Node: React.FC<props> = ({
   Node,
@@ -20,67 +32,62 @@ const Node: React.FC<props> = ({
   setSubmitButton,
 }) => {
   const [value, setValue] = useState("");
-
   const [disable, setDisable] = useState(false);
+  const [isError, setError] = useState(false);
 
-  ans = value;
   const selectCompo = () => {
-    if (Node.name)
-      switch (Node.answerFieldType) {
-        case "dropdown":
-          return (
-            <Dropdown answers={Node.answers} setValue={setValue} ans={ans} />
-          );
-        case "multipleChoice":
-          return <h2>{Node.question}</h2>;
-        default:
-          return <h1>enter valid field type</h1>;
-      }
-  };
-
-  const searchingNode = () => {
-    addInput(Node, value);
-    setDisable(true);
-    if (Node.children === undefined && value) {
-      return setSubmitButton(true);
-    } else if (Node.children && value) {
-      setSubmitButton(false);
-      let currentNode = NodesQueue.pop();
-      let nextNodeIndex: number | undefined;
-      while (true) {
-        if (Node.name === currentNode?.name) {
-          nextNodeIndex = Node.answers?.indexOf(value);
-          if (nextNodeIndex === -1) {
-            return -1;
-          }
-          break;
-        } else {
-          currentNode = NodesQueue.pop();
-        }
-      }
-      if (Node.children && nextNodeIndex !== undefined) {
-        setNodesQueue([...NodesQueue, Node, Node.children[nextNodeIndex]]);
-      } else if (Node.children && nextNodeIndex) {
-        setNodesQueue([...NodesQueue, Node, Node.children[0]]);
-      }
+    switch (Node.answerFieldType) {
+      case "multipleChoice":
+        return (
+          <MultipleChoice
+            answers={Node.answers}
+            setValue={setValue}
+            disable={disable}
+          />
+        );
+      case "textarea":
+        return <TextArea {...{ disable, setValue }} />;
+      default:
+        return <h1>enter valid field type</h1>;
     }
   };
 
-  useEffect(() => {
-    updateInput(Node, value);
-  }, [value, Node]);
+  const nextNode = () => {
+    if (value) {
+      addInput(Node, value);
+    }
+    if (isError) {
+      setError(false);
+    }
+    if (Node.children === undefined && value) {
+      setDisable(true);
+      return setSubmitButton(true);
+    } else if (Node.children && value) {
+      const nextNode = Node.answers?.indexOf(value);
+      if (nextNode !== undefined && nextNode !== -1) {
+        setDisable(true);
+        setNodesQueue([...NodesQueue, Node.children[nextNode]]);
+      } else if (Node.answerFieldType === "textarea") {
+        setDisable(true);
+        setNodesQueue([...NodesQueue, Node.children[0]]);
+      }
+    } else if (value === "") {
+      setError(true);
+    }
+  };
 
   return (
-    <FormControl w={"100%"}>
+    <FormControl w={"100%"} isInvalid={isError}>
       <Flex direction={"column"}>
         <FormLabel as="legend" colorScheme="green" alignSelf="stretch">
           {Node.question}
         </FormLabel>
         {selectCompo()}
+        <FormErrorMessage>{errorMessage(Node)}</FormErrorMessage>
         <Button
           marginTop="1rem"
           colorScheme="green"
-          onClick={searchingNode}
+          onClick={nextNode}
           disabled={disable}
         >
           Next

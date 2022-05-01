@@ -1,15 +1,18 @@
-import { useCallback, useState } from "react";
-import NodeJsx from "./selectNode";
-import Tree, { TreeProps } from "../Tree";
 import {
   Center,
   VStack,
   Divider,
   useMediaQuery,
   Button,
+  ButtonGroup,
+  Link,
 } from "@chakra-ui/react";
-import { userInputObj } from "../utils/addInput";
+import { useCallback, useState } from "react";
+import NodeJsx from "./selectNode";
+import Tree, { TreeProps } from "../Tree";
+import { generateDownloadLink } from "../utils/addInput";
 
+let lastKey = 0;
 const TreeJsx: React.FC = () => {
   const [NodesQueue, setNodesQueue] = useState<TreeProps[]>([Tree]);
   const [screenSize] = useMediaQuery("(min-width:600px)");
@@ -27,16 +30,39 @@ const TreeJsx: React.FC = () => {
   }, [NodesQueue]);
 
   return (
-    <Center>
+    <Center key={lastKey}>
       <VStack
         spacing="20px"
         divider={<Divider />}
         width={screenSize ? "45%" : "75%"}
       >
         {returnNodes()}
-        {showSubmitButton ? (
-          <Button onClick={() => console.log(userInputObj)}>Submit</Button>
-        ) : null}
+        <ButtonGroup
+          alignSelf="stretch"
+          justifyContent={"space-around"}
+          size={screenSize ? "lg" : "md"}
+        >
+          {showSubmitButton ? (
+            <Button
+              as={Link}
+              href={generateDownloadLink()}
+              download={"userAns"}
+              textDecoration={"none !important"}
+            >
+              Submit
+            </Button>
+          ) : null}
+          {NodesQueue.length >= 2 ? (
+            <Button
+              onClick={() => {
+                lastKey++;
+                setNodesQueue([Tree]);
+              }}
+            >
+              Reset
+            </Button>
+          ) : null}
+        </ButtonGroup>
       </VStack>
     </Center>
   );
