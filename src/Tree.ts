@@ -56,6 +56,11 @@ const Tree: TreeProps = {
                     },
                   ],
                 },
+                {
+                  name: "node 8",
+                  answerFieldType: "textarea",
+                  question: "end",
+                },
               ],
             },
           ],
