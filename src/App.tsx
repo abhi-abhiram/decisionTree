@@ -4,6 +4,7 @@ import { Box, useColorMode, IconButton } from "@chakra-ui/react";
 import { SunIcon, MoonIcon } from "@chakra-ui/icons";
 import { Nav } from "./components";
 import Tree from "./decisionTree/displayTree";
+import { Index } from "./buildTree";
 
 function App() {
   const { colorMode, toggleColorMode } = useColorMode();
@@ -22,6 +23,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Nav />} />
         <Route path="/tree" element={<Tree />} />
+        <Route path="/buildTree" element={<Index />} />
       </Routes>
     </Box>
   );

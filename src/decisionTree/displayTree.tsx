@@ -10,7 +10,7 @@ import {
 import { useCallback, useState } from "react";
 import NodeJsx from "./selectNode";
 import Tree, { TreeProps } from "../Tree";
-import { generateDownloadLink } from "../utils/addInput";
+import { emptyUserInputs, generateDownloadLink } from "../utils/addInput";
 
 let lastKey = 0;
 const TreeJsx: React.FC = () => {
@@ -57,6 +57,8 @@ const TreeJsx: React.FC = () => {
               onClick={() => {
                 lastKey++;
                 setNodesQueue([Tree]);
+                setSubmitButton(false);
+                emptyUserInputs();
               }}
             >
               Reset

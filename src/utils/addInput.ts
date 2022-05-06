@@ -6,7 +6,7 @@ interface userInput {
   userAns: string;
 }
 
-export const userInputObj: userInput[] = [];
+export let userInputObj: userInput[] = [];
 
 function addInput(currentNode: TreeProps, ans: string) {
   userInputObj.push({
@@ -21,6 +21,10 @@ export function generateDownloadLink() {
   const blob = new Blob([json], { type: "application/json" });
   const href = URL.createObjectURL(blob);
   return href;
+}
+
+export function emptyUserInputs() {
+  userInputObj = [];
 }
 
 export default addInput;

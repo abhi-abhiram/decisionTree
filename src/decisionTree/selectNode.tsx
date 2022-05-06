@@ -6,7 +6,7 @@ import {
   FormErrorMessage,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { MultipleChoice, TextArea } from "../components";
+import { MultipleChoice, SearchBox, TextArea, InputBox } from "../components";
 import { TreeProps } from "../Tree";
 import addInput from "../utils/addInput";
 
@@ -47,6 +47,10 @@ const Node: React.FC<props> = ({
         );
       case "textarea":
         return <TextArea {...{ disable, setValue }} />;
+      case "searchBox":
+        return <SearchBox {...{ disable, setValue }} />;
+      case "inputBox":
+        return <InputBox {...{ disable, setValue }} />;
       default:
         return <h1>enter valid field type</h1>;
     }
@@ -67,7 +71,10 @@ const Node: React.FC<props> = ({
       if (nextNode !== undefined && nextNode !== -1) {
         setDisable(true);
         setNodesQueue([...NodesQueue, Node.children[nextNode]]);
-      } else if (Node.answerFieldType === "textarea") {
+      } else if (
+        Node.answerFieldType === "textarea" ||
+        Node.answerFieldType === "inputBox"
+      ) {
         setDisable(true);
         setNodesQueue([...NodesQueue, Node.children[0]]);
       }
