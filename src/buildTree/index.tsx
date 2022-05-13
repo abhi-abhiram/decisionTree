@@ -57,12 +57,13 @@ function bfs(
   }
 }
 
-let firstRun = true;
-
 export function Index() {
   const [tree, setTree] = useState<RawNodeDatum>({
     name: "",
     children: [],
+    attributes: {
+      firstNode: true,
+    },
   });
   const [node, setNode] = useState<RawNodeDatum | undefined>(undefined);
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -126,6 +127,7 @@ export function Index() {
                 setDeleteNode(nodeDatum);
               }}
               color="red.600"
+              disabled={Boolean(nodeDatum?.attributes?.firstNode)}
             >
               Delete
             </Button>
@@ -149,12 +151,12 @@ export function Index() {
           }}
         />
         <NodeModal
-          isOpen={Boolean(isOpen || firstRun)}
+          isOpen={Boolean(isOpen || !tree.name)}
           onSubmit={
-            firstRun
+            !tree.name
               ? (txt) => {
-                  setTree({ name: txt, children: [] });
-                  firstRun = false;
+                  tree.name = txt;
+                  setTree({ ...tree });
                 }
               : handleOnSubmit
           }
