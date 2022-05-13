@@ -7,6 +7,7 @@ import {
   Text,
   Button,
   Divider,
+  useColorMode,
 } from "@chakra-ui/react";
 import { SearchIcon } from "@chakra-ui/icons";
 import { useEffect, useState } from "react";
@@ -21,6 +22,7 @@ const SearchBox: React.FC<props> = ({ setValue, disable }) => {
   const [searchData, setsearchData] = useState<string[]>([]);
   const [text, setText] = useState<string>("");
   const [suggestions, setSuggestions] = useState<string[]>([]);
+  const { colorMode } = useColorMode();
 
   useEffect(() => {
     axios
@@ -54,7 +56,7 @@ const SearchBox: React.FC<props> = ({ setValue, disable }) => {
         <Text
           css={{
             ":hover": {
-              backgroundColor: "#718096",
+              backgroundColor: colorMode === "dark" ? "#718096" : "#E2E8F0",
             },
           }}
           textAlign="center"
@@ -101,7 +103,7 @@ const SearchBox: React.FC<props> = ({ setValue, disable }) => {
           divider={<Divider />}
           maxH={"400px"}
           overflowY="auto"
-          bg="gray.600"
+          bg={colorMode === "dark" ? "gray.600" : "gray.300"}
           w={"100%"}
           borderRadius="5px"
           position={"absolute"}
