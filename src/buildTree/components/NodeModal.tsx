@@ -24,7 +24,7 @@ const NodeModal: React.FC<Props> = ({ isOpen, onClose, onSubmit }) => {
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Add family member</ModalHeader>
+        <ModalHeader>Add Question</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <FormControl>
