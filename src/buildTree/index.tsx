@@ -3,59 +3,12 @@ import { useEffect, useState } from "react";
 import Tree from "react-d3-tree";
 import NodeModal from "./components/NodeModal";
 import NodeSettings from "./components/NodeSettings";
-import setNodeSettings from "./utils/setNodeSettings";
-import questionsTree, { TreeProps } from "../Tree";
+import bfs from "./utils/nodeFunction";
 import {
   RawNodeDatum,
   RenderCustomNodeElementFn,
 } from "react-d3-tree/lib/types/common";
-
-function bfs(
-  name: string,
-  tree: RawNodeDatum,
-  deleteNode: boolean,
-  node?: RawNodeDatum
-) {
-  const queue: RawNodeDatum[] = [];
-  const queueQuestions: TreeProps[] = [];
-
-  queue.unshift(tree);
-  queueQuestions.unshift(questionsTree);
-
-  while (queue.length > 0) {
-    const curNode = queue.pop();
-    const curQues = queueQuestions.pop();
-
-    if (curNode && deleteNode) {
-      let isNodeFound = false;
-      curNode.children?.forEach((child, index) => {
-        if (child.name === name) {
-          curNode.children?.splice(index, 1);
-          curQues?.children?.splice(index, 1);
-          isNodeFound = true;
-        }
-      });
-      if (isNodeFound) return { ...tree };
-    } else if (curNode?.name === name && curNode && node) {
-      curNode?.children?.push(node);
-      curQues?.children?.push({
-        name: node.name,
-        question: "",
-        answerFieldType: "inputBox",
-      });
-      return { ...tree };
-    }
-
-    const len = curNode?.children?.length;
-
-    if (len && curNode.children) {
-      for (let i = 0; i < len; i++) {
-        queue.unshift(curNode.children[i]);
-        if (curQues?.children) queueQuestions.unshift(curQues.children[i]);
-      }
-    }
-  }
-}
+import quesTree, { TreeProps } from "../Tree";
 
 export function Index() {
   const [tree, setTree] = useState<RawNodeDatum>({
@@ -79,7 +32,7 @@ export function Index() {
 
   useEffect(() => {
     let newTree: RawNodeDatum | undefined = undefined;
-    if (DeleteNode) newTree = bfs(DeleteNode.name, tree, true);
+    if (DeleteNode) newTree = bfs(DeleteNode.name, tree, true, false);
     if (newTree) setTree(newTree);
     setDeleteNode(undefined);
   }, [DeleteNode, tree]);
@@ -87,7 +40,7 @@ export function Index() {
   const handleOnSubmit = (txt: string) => {
     let newTree: RawNodeDatum | undefined = undefined;
     if (node)
-      newTree = bfs(node.name, tree, false, { name: txt, children: [] });
+      newTree = bfs(node.name, tree, false, false, { name: txt, children: [] });
     if (newTree) setTree(newTree);
     setIsOpen(false);
     setNode(undefined);
@@ -105,8 +58,8 @@ export function Index() {
             stroke: "none",
           }}
           onClick={() => {
-            setOpenSettings(true);
             setNode(nodeDatum);
+            setOpenSettings(true);
           }}
         />
         <foreignObject x="10" y="10" width="150px" height="100px">
@@ -122,15 +75,16 @@ export function Index() {
             >
               Add
             </Button>
-            <Button
-              onClick={() => {
-                setDeleteNode(nodeDatum);
-              }}
-              color="red.600"
-              disabled={Boolean(nodeDatum?.attributes?.firstNode)}
-            >
-              Delete
-            </Button>
+            {!Boolean(nodeDatum?.attributes?.firstNode) && (
+              <Button
+                onClick={() => {
+                  setDeleteNode(nodeDatum);
+                }}
+                color="red.600"
+              >
+                Delete
+              </Button>
+            )}
           </ButtonGroup>
         </foreignObject>
       </>
@@ -156,24 +110,27 @@ export function Index() {
             !tree.name
               ? (txt) => {
                   tree.name = txt;
+                  quesTree.name = txt;
                   setTree({ ...tree });
                 }
               : handleOnSubmit
           }
           onClose={onClose}
         />
-        <NodeSettings
-          isOpen={openSettings}
-          onClose={() => {
-            setOpenSettings(false);
-            setNode(undefined);
-          }}
-          onSubmit={() => {
-            setNodeSettings(node as RawNodeDatum);
-            setNode(undefined);
-            setOpenSettings(false);
-          }}
-        />
+        {openSettings && (
+          <NodeSettings
+            curQues={bfs(node?.name as string, tree, false, true) as TreeProps}
+            isOpen={openSettings}
+            onClose={() => {
+              setOpenSettings(false);
+              setNode(undefined);
+            }}
+            onSubmit={() => {
+              setNode(undefined);
+              setOpenSettings(false);
+            }}
+          />
+        )}
       </Box>
     </Stack>
   );
