@@ -9,6 +9,7 @@ import {
   RenderCustomNodeElementFn,
 } from "react-d3-tree/lib/types/common";
 import quesTree, { TreeProps } from "../Tree";
+import axios from "axios";
 
 export function Index() {
   const [tree, setTree] = useState<RawNodeDatum>({
@@ -132,6 +133,16 @@ export function Index() {
           />
         )}
       </Box>
+      <Button
+        position={"absolute"}
+        bottom="50px"
+        right="50px"
+        onClick={() => {
+          axios.post("/api/setTree", { Tree: quesTree });
+        }}
+      >
+        Submit
+      </Button>
     </Stack>
   );
 }

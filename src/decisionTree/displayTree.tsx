@@ -6,17 +6,22 @@ import {
   Button,
   ButtonGroup,
   Link,
+  Heading,
 } from "@chakra-ui/react";
 import { useCallback, useState } from "react";
 import NodeJsx from "./selectNode";
 import Tree, { TreeProps } from "../Tree";
 import { emptyUserInputs, generateDownloadLink } from "../utils/addInput";
+import axios from "axios";
 
 let lastKey = 0;
 const TreeJsx: React.FC = () => {
-  const [NodesQueue, setNodesQueue] = useState<TreeProps[]>([Tree]);
+  const [NodesQueue, setNodesQueue] = useState<TreeProps[]>([]);
   const [screenSize] = useMediaQuery("(min-width:600px)");
   const [showSubmitButton, setSubmitButton] = useState(false);
+
+  if (NodesQueue.length === 0)
+    axios.get("/api/getTree").then((reponse) => setNodesQueue([reponse.data]));
 
   const returnNodes = useCallback(() => {
     return NodesQueue.map((Node, index) => {
@@ -36,7 +41,7 @@ const TreeJsx: React.FC = () => {
         divider={<Divider />}
         width={screenSize ? "45%" : "75%"}
       >
-        {returnNodes()}
+        {NodesQueue.length !== 0 ? returnNodes() : <Heading>Loading</Heading>}
         <ButtonGroup
           alignSelf="stretch"
           justifyContent={"space-around"}

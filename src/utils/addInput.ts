@@ -16,8 +16,8 @@ function addInput(currentNode: TreeProps, ans: string) {
   });
 }
 
-export function generateDownloadLink() {
-  const json = JSON.stringify(userInputObj);
+export function generateDownloadLink(obj?: TreeProps) {
+  const json = JSON.stringify(obj ? obj : userInputObj);
   const blob = new Blob([json], { type: "application/json" });
   const href = URL.createObjectURL(blob);
   return href;

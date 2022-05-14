@@ -63,7 +63,7 @@ const Node: React.FC<props> = ({
     if (isError) {
       setError(false);
     }
-    if (Node.children === undefined && value) {
+    if (Node.children?.length === 0 && value) {
       setDisable(true);
       return setSubmitButton(true);
     } else if (Node.children && value) {
@@ -72,10 +72,11 @@ const Node: React.FC<props> = ({
         setDisable(true);
         setNodesQueue([...NodesQueue, Node.children[nextNode]]);
       } else if (
-        Node.answerFieldType === "textarea" ||
-        Node.answerFieldType === "inputBox"
+        (nextNode === undefined || nextNode === -1) &&
+        Node.children.length !== 0
       ) {
         setDisable(true);
+        console.log("called");
         setNodesQueue([...NodesQueue, Node.children[0]]);
       }
     } else if (value === "") {

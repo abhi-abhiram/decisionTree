@@ -13,9 +13,9 @@ export interface TreeProps {
 }
 
 const Tree: TreeProps = {
-  name: "root",
+  name: "",
   answerFieldType: "inputBox",
-  question: "What is your username?",
+  question: "",
   answers: [],
   children: [],
 };
