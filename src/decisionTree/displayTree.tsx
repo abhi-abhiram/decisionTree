@@ -10,7 +10,7 @@ import {
 } from "@chakra-ui/react";
 import { useCallback, useState } from "react";
 import NodeJsx from "./selectNode";
-import Tree, { TreeProps } from "../Tree";
+import { TreeProps } from "../Tree";
 import { emptyUserInputs, generateDownloadLink } from "../utils/addInput";
 import axios from "axios";
 
@@ -61,7 +61,7 @@ const TreeJsx: React.FC = () => {
             <Button
               onClick={() => {
                 lastKey++;
-                setNodesQueue([Tree]);
+                setNodesQueue((Tree) => [Tree[0]]);
                 setSubmitButton(false);
                 emptyUserInputs();
               }}
