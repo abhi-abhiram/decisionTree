@@ -10,6 +10,7 @@ export interface TreeProps {
   question: string;
   answers?: string[];
   children?: TreeProps[];
+  url?: string;
 }
 
 const Tree: TreeProps = {
