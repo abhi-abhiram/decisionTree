@@ -1,4 +1,4 @@
-import { MongoClient } from "mongodb";
+import { MongoClient, Document } from "mongodb";
 import { VercelRequest, VercelResponse } from "@vercel/node";
 
 const client = new MongoClient(
@@ -7,9 +7,15 @@ const client = new MongoClient(
 
 const db = client.db("test");
 
+interface T extends Document {
+  name: number;
+}
+
 export default async function getData(req: VercelRequest, res: VercelResponse) {
   await client.connect();
-  db.collection("Tree").deleteMany({});
-  await db.collection("Tree").insertOne(req.body.Tree);
-  res.json({ success: true });
+  const data = await db
+    .collection("Tree")
+    .find<T>({}, { projection: { name: 1 } })
+    .toArray();
+  res.json(data);
 }

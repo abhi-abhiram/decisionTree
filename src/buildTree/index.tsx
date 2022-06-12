@@ -9,11 +9,14 @@ import {
   RenderCustomNodeElementFn,
 } from "react-d3-tree/lib/types/common";
 import quesTree, { TreeProps } from "../Tree";
-import SubmitTree from "./components/SubmitTree";
+import { SelectTree } from "../components";
+import SubmitAction from "./components/SubmitAction";
+
+const setTreeId = { _id: "" };
 
 export function Index() {
   const [tree, setTree] = useState<RawNodeDatum>({
-    name: "",
+    name: "root",
     children: [],
     attributes: {
       firstNode: true,
@@ -95,6 +98,10 @@ export function Index() {
   return (
     <Stack direction="row" spacing="md">
       <Box w="100%" h="100vh">
+        <SelectTree
+          showCreateButton={true}
+          treeConfigObj={{ setTree, setTreeId }}
+        />
         <Tree
           data={tree}
           renderCustomNodeElement={renderCustomNode}
@@ -106,7 +113,7 @@ export function Index() {
           }}
         />
         <NodeModal
-          isOpen={Boolean(isOpen || !tree.name)}
+          isOpen={isOpen}
           onSubmit={
             !tree.name
               ? (txt) => {
@@ -133,7 +140,7 @@ export function Index() {
           />
         )}
       </Box>
-      <SubmitTree />
+      <SubmitAction devTree={tree} treeId={setTreeId._id} />
     </Stack>
   );
 }

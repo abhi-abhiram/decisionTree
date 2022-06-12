@@ -4,17 +4,13 @@ export default function validateTree() {
   const queueQuestions: TreeProps[] = [];
   queueQuestions.unshift(questionsTree);
 
-  const errorMessage: { isTreeValid: boolean; messages: string[] } = {
-    isTreeValid: true,
-    messages: [],
-  };
+  const errorMessages: string[] = [];
   while (queueQuestions.length > 0) {
     const curQues = queueQuestions.pop();
 
     curQues?.answers?.forEach((ans, index) => {
       if (ans === "") {
-        errorMessage.isTreeValid = false;
-        errorMessage.messages.push(
+        errorMessages.push(
           `At node ${curQues?.name} answer must be defined for child node ${
             curQues.children && curQues.children[index].name
           }`
@@ -28,16 +24,14 @@ export default function validateTree() {
       curQues?.answerFieldType === "inputBox"
     ) {
       if ((curQues?.children?.length as number) > 1) {
-        errorMessage.isTreeValid = false;
-        errorMessage.messages.push(
+        errorMessages.push(
           `At node ${curQues.name} for answer field ${curQues.answerFieldType} only one child is allowed`
         );
       }
     }
 
     if (!curQues?.question) {
-      errorMessage.isTreeValid = false;
-      errorMessage.messages.push(`
+      errorMessages.push(`
       At node ${curQues?.name} question can't be empty`);
     }
 
@@ -48,5 +42,5 @@ export default function validateTree() {
       }
     }
   }
-  return errorMessage;
+  return errorMessages;
 }

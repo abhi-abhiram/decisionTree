@@ -9,7 +9,11 @@ const db = client.db("test");
 
 export default async function getData(req: VercelRequest, res: VercelResponse) {
   await client.connect();
-  const _id = new ObjectId(req.body._id);
-  const data = await db.collection("Tree").findOne({ _id });
-  res.json(data);
+
+  const { treeId, devTree, quesTree } = req.body;
+
+  await db
+    .collection("Tree")
+    .updateOne({ _id: new ObjectId(treeId) }, { $set: { devTree, quesTree } });
+  return res.json({ success: true, message: "Updated successfully" });
 }
