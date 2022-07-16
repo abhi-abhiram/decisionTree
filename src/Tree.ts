@@ -1,8 +1,4 @@
-export type answerFields =
-  | "multipleChoice"
-  | "textarea"
-  | "searchBox"
-  | "inputBox";
+import { z } from 'zod';
 
 export interface TreeProps {
   name: string;
@@ -14,18 +10,22 @@ export interface TreeProps {
 }
 
 const Tree: TreeProps = {
-  name: "",
-  answerFieldType: "inputBox",
-  question: "",
+  name: '',
+  answerFieldType: 'inputBox',
+  question: '',
   answers: [],
   children: [],
 };
 
-export const answerFields: string[] = [
-  "multipleChoice",
-  "textarea",
-  "searchBox",
-  "inputBox",
-];
+export const answerFieldsValues = [
+  'multipleChoice',
+  'textarea',
+  'searchBox',
+  'inputBox',
+] as const;
+
+export const answerFieldsObj = z.enum(answerFieldsValues);
+
+export type answerFields = z.infer<typeof answerFieldsObj>;
 
 export default Tree;

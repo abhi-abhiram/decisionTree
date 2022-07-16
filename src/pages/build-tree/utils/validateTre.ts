@@ -1,4 +1,4 @@
-import questionsTree, { TreeProps } from "../../Tree";
+import questionsTree, { TreeProps } from '../../../Tree';
 
 export default function validateTree() {
   const queueQuestions: TreeProps[] = [];
@@ -9,7 +9,7 @@ export default function validateTree() {
     const curQues = queueQuestions.pop();
 
     curQues?.answers?.forEach((ans, index) => {
-      if (ans === "") {
+      if (ans === '') {
         errorMessages.push(
           `At node ${curQues?.name} answer must be defined for child node ${
             curQues.children && curQues.children[index].name
@@ -19,9 +19,9 @@ export default function validateTree() {
     });
 
     if (
-      curQues?.answerFieldType === "textarea" ||
-      curQues?.answerFieldType === "searchBox" ||
-      curQues?.answerFieldType === "inputBox"
+      curQues?.answerFieldType === 'textarea' ||
+      curQues?.answerFieldType === 'searchBox' ||
+      curQues?.answerFieldType === 'inputBox'
     ) {
       if ((curQues?.children?.length as number) > 1) {
         errorMessages.push(

@@ -1,12 +1,12 @@
-import { Button } from "@chakra-ui/react";
-import { useState } from "react";
-import { RawNodeDatum } from "react-d3-tree/lib/types/common";
-import validateTree from "../utils/validateTre";
-import ShowErrors from "./ShowErrors";
-import SaveNewTree from "./SaveNewTree";
-import axios from "axios";
-import FeedBack, { status } from "./AlertDialog";
-import quesTree from "../../Tree";
+import { Button } from '@chakra-ui/react';
+import { useState } from 'react';
+import { RawNodeDatum } from 'react-d3-tree/lib/types/common';
+import validateTree from '../utils/validateTre';
+import ShowErrors from './ShowErrors';
+import SaveNewTree from './SaveNewTree';
+import axios from 'axios';
+import FeedBack, { status } from './AlertDialog';
+import quesTree from '../../../Tree';
 
 interface props {
   devTree: RawNodeDatum;
@@ -15,7 +15,7 @@ interface props {
 
 let ErrorMessages: string[] = [];
 
-const messageObj = { status: status.SUCCESS, message: "" };
+const messageObj = { status: status.SUCCESS, message: '' };
 
 const SubmitAction = ({ devTree, treeId }: props) => {
   const [showModel, setShowModel] = useState(false);
@@ -25,7 +25,7 @@ const SubmitAction = ({ devTree, treeId }: props) => {
   return (
     <>
       <Button
-        position={"absolute"}
+        position={'absolute'}
         bottom="50px"
         right="50px"
         isLoading={loading}
@@ -36,7 +36,7 @@ const SubmitAction = ({ devTree, treeId }: props) => {
             setLoading(true);
             setShowModel(false);
             axios
-              .post("/api/updateTree", {
+              .post('/api/updateTree', {
                 treeId,
                 devTree,
                 quesTree,
@@ -54,7 +54,7 @@ const SubmitAction = ({ devTree, treeId }: props) => {
           }
         }}
       >
-        {treeId ? "Update" : "Save"}
+        {treeId ? 'Update' : 'Save'}
       </Button>
       {ErrorMessages.length === 0 ? (
         treeId ? (

@@ -6,17 +6,17 @@ import {
   Button,
   ButtonGroup,
   Link,
-} from "@chakra-ui/react";
-import { useCallback, useState } from "react";
-import NodeJsx from "./selectNode";
-import { TreeProps } from "../Tree";
-import { emptyUserInputs, generateDownloadLink } from "../utils/addInput";
-import { SelectTree } from "../components";
+} from '@chakra-ui/react';
+import { useCallback, useState } from 'react';
+import NodeJsx from './SelectNode';
+import { TreeProps } from '../../Tree';
+import { emptyUserInputs, generateDownloadLink } from '../../utils/addInput';
+import { SelectTree } from '../../components';
 
 let lastKey = 0;
 const TreeJsx: React.FC = () => {
   const [NodesQueue, setNodesQueue] = useState<TreeProps[]>([]);
-  const [screenSize] = useMediaQuery("(min-width:600px)");
+  const [screenSize] = useMediaQuery('(min-width:600px)');
   const [showSubmitButton, setSubmitButton] = useState(false);
 
   const returnNodes = useCallback(() => {
@@ -39,20 +39,20 @@ const TreeJsx: React.FC = () => {
         <VStack
           spacing="20px"
           divider={<Divider />}
-          width={screenSize ? "45%" : "75%"}
+          width={screenSize ? '45%' : '75%'}
         >
           {NodesQueue.length !== 0 && returnNodes()}
           <ButtonGroup
             alignSelf="stretch"
-            justifyContent={"space-around"}
-            size={screenSize ? "lg" : "md"}
+            justifyContent={'space-around'}
+            size={screenSize ? 'lg' : 'md'}
           >
             {showSubmitButton ? (
               <Button
                 as={Link}
                 href={generateDownloadLink()}
-                download={"userAns"}
-                textDecoration={"none !important"}
+                download={'userAns'}
+                textDecoration={'none !important'}
               >
                 Submit
               </Button>

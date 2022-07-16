@@ -1,4 +1,4 @@
-import { Button } from "@chakra-ui/button";
+import { Button } from '@chakra-ui/button';
 import {
   Modal,
   ModalBody,
@@ -7,13 +7,13 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-} from "@chakra-ui/modal";
-import { FormControl, FormLabel, Input, ButtonGroup } from "@chakra-ui/react";
-import axios from "axios";
-import React, { useRef, useState } from "react";
-import { RawNodeDatum } from "react-d3-tree/lib/types/common";
-import quesTree from "../../Tree";
-import FeedBack, { status } from "./AlertDialog";
+} from '@chakra-ui/modal';
+import { FormControl, FormLabel, Input, ButtonGroup } from '@chakra-ui/react';
+import axios from 'axios';
+import React, { useRef, useState } from 'react';
+import { RawNodeDatum } from 'react-d3-tree/lib/types/common';
+import quesTree from '../../../Tree';
+import FeedBack, { status } from './AlertDialog';
 
 interface props {
   showModel: boolean;
@@ -21,7 +21,7 @@ interface props {
   devTree: RawNodeDatum;
 }
 
-const messageObj = { status: status.SUCCESS, message: "" };
+const messageObj = { status: status.SUCCESS, message: '' };
 const SaveNewTree = ({ showModel, setShowModel, devTree }: props) => {
   const [Loading, setLoading] = useState<boolean>(false);
   const input = useRef<HTMLInputElement>(null);
@@ -47,7 +47,7 @@ const SaveNewTree = ({ showModel, setShowModel, devTree }: props) => {
                 onClick={() => {
                   setLoading(true);
                   axios
-                    .post("/api/saveTree", {
+                    .post('/api/saveTree', {
                       name: input.current?.value,
                       quesTree,
                       devTree,
@@ -69,7 +69,7 @@ const SaveNewTree = ({ showModel, setShowModel, devTree }: props) => {
               >
                 Save
               </Button>
-              <Button onClick={onClose} colorScheme={"green"}>
+              <Button onClick={onClose} colorScheme={'green'}>
                 Close
               </Button>
             </ButtonGroup>

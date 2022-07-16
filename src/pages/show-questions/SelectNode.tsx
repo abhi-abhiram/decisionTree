@@ -4,11 +4,16 @@ import {
   FormControl,
   FormLabel,
   FormErrorMessage,
-} from "@chakra-ui/react";
-import { useState } from "react";
-import { MultipleChoice, SearchBox, TextArea, InputBox } from "../components";
-import { TreeProps } from "../Tree";
-import addInput from "../utils/addInput";
+} from '@chakra-ui/react';
+import { useState } from 'react';
+import {
+  MultipleChoice,
+  SearchBox,
+  TextArea,
+  InputBox,
+} from '../../components';
+import { TreeProps } from '../../Tree';
+import addInput from '../../utils/addInput';
 
 interface props {
   Node: TreeProps;
@@ -18,10 +23,10 @@ interface props {
 }
 
 function errorMessage(currentNode: TreeProps) {
-  if (currentNode.answerFieldType === "multipleChoice") {
-    return "Please select the option.";
+  if (currentNode.answerFieldType === 'multipleChoice') {
+    return 'Please select the option.';
   } else {
-    return "Please enter the value.";
+    return 'Please enter the value.';
   }
 }
 
@@ -31,13 +36,13 @@ const Node: React.FC<props> = ({
   setNodesQueue,
   setSubmitButton,
 }) => {
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState('');
   const [disable, setDisable] = useState(false);
   const [isError, setError] = useState(false);
 
   const selectCompo = () => {
     switch (Node.answerFieldType) {
-      case "multipleChoice":
+      case 'multipleChoice':
         return (
           <MultipleChoice
             answers={Node.answers}
@@ -45,11 +50,11 @@ const Node: React.FC<props> = ({
             disable={disable}
           />
         );
-      case "textarea":
+      case 'textarea':
         return <TextArea {...{ disable, setValue }} />;
-      case "searchBox":
+      case 'searchBox':
         return <SearchBox {...{ disable, setValue }} />;
-      case "inputBox":
+      case 'inputBox':
         return <InputBox {...{ disable, setValue }} />;
       default:
         return <h1>enter valid field type</h1>;
@@ -76,17 +81,17 @@ const Node: React.FC<props> = ({
         Node.children.length !== 0
       ) {
         setDisable(true);
-        console.log("called");
+        console.log('called');
         setNodesQueue([...NodesQueue, Node.children[0]]);
       }
-    } else if (value === "") {
+    } else if (value === '') {
       setError(true);
     }
   };
 
   return (
-    <FormControl w={"100%"} isInvalid={isError}>
-      <Flex direction={"column"}>
+    <FormControl w={'100%'} isInvalid={isError}>
+      <Flex direction={'column'}>
         <FormLabel as="legend" colorScheme="green" alignSelf="stretch">
           {Node.question}
         </FormLabel>
