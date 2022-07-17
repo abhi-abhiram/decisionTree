@@ -7,14 +7,14 @@ import { useState } from 'react';
 import Tree from 'react-d3-tree';
 import { uid } from 'uid';
 import NodeSettings from './components/NodeSettings';
-import { TreeStrc } from '../../utils/types';
 import { bfs, deleteBfs, editBfs } from './utils/nodeMethonds';
 import MenuComponent from './components/Menu';
+import { TreeSchema } from '../../context/TreeContext';
 
 export function Index() {
-  const [tree, setTree] = useState<TreeStrc>({
+  const [tree, setTree] = useState<TreeSchema>({
     name: 'root',
-    answerFieldType: 'inputBox',
+    answerFieldType: 'InputBox',
     id: uid(10),
     question: 'Question?',
     answers: [],
@@ -22,12 +22,13 @@ export function Index() {
     url: '',
     answer: '',
   });
+
   const [node, setNode] = useState<RawNodeDatum | undefined>(undefined);
 
-  function addNode(node: TreeStrc) {
-    const newNodeData: TreeStrc = {
+  function addNode(node: TreeSchema) {
+    const newNodeData: TreeSchema = {
       name: '',
-      answerFieldType: 'inputBox',
+      answerFieldType: 'InputBox',
       id: uid(10),
       question: '',
       answers: [],
@@ -41,12 +42,12 @@ export function Index() {
     setNode(newNodeData);
   }
 
-  function deleteNode(node: TreeStrc) {
+  function deleteNode(node: TreeSchema) {
     const newTree = deleteBfs(node.id, tree);
     setTree(newTree);
   }
 
-  function editNode(node: TreeStrc) {
+  function editNode(node: TreeSchema) {
     const newTree = editBfs(node.id, node, tree);
     setTree(newTree);
   }
@@ -73,7 +74,7 @@ export function Index() {
           <ButtonGroup alignSelf="center" size="sm" margin="10px 10px">
             <Button
               onClick={() => {
-                addNode(nodeDatum as unknown as TreeStrc);
+                addNode(nodeDatum as unknown as TreeSchema);
               }}
             >
               Add
@@ -81,7 +82,7 @@ export function Index() {
             {!Boolean(nodeDatum?.attributes?.firstNode) && (
               <Button
                 onClick={() => {
-                  deleteNode(nodeDatum as unknown as TreeStrc);
+                  deleteNode(nodeDatum as unknown as TreeSchema);
                 }}
                 color="red.600"
               >
@@ -109,7 +110,7 @@ export function Index() {
       />
       <NodeSettings
         Tree={tree}
-        currentNode={node as TreeStrc}
+        currentNode={node as TreeSchema}
         isOpen={Boolean(node)}
         onClose={() => {
           setNode(undefined);

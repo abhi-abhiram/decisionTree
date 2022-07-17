@@ -1,41 +1,43 @@
-import { Button, IconButton } from '@chakra-ui/button';
-import {
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
-} from '@chakra-ui/modal';
-import { Formik, Form, FieldArray } from 'formik';
 import {
   FormControl,
   FormLabel,
   VStack,
   Flex,
   ButtonGroup,
+  Button,
+  IconButton,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalHeader,
+  ModalOverlay,
 } from '@chakra-ui/react';
-import { AddIcon, MinusIcon } from '@chakra-ui/icons';
+import { Formik, Form, FieldArray } from 'formik';
+import { useMemo } from 'react';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
-import { TreeStrc } from '../../../utils/types';
-import { answerFieldsObj, answerFieldsValues } from '../../../Tree';
+import { AddIcon, MinusIcon } from '@chakra-ui/icons';
 import { z } from 'zod';
+import {
+  TreeSchema,
+  AnswerFields,
+  answerFieldsEnum,
+} from '../../../context/TreeContext';
 import FormInput from '../../../components/FormikComponents/FormInput';
 import FormSelect from '../../../components/FormikComponents/FormSelect';
-import { useMemo } from 'react';
 
 type Props = {
-  currentNode: TreeStrc;
+  currentNode: TreeSchema;
   isOpen: boolean;
   onClose: () => void;
   onSubmit: () => void;
-  Tree: TreeStrc;
-  editNode: (node: TreeStrc) => void;
+  Tree: TreeSchema;
+  editNode: (node: TreeSchema) => void;
 };
 
 const NodeDataSchema = z.object({
   name: z.string(),
-  answerFieldType: answerFieldsObj,
+  answerFieldType: answerFieldsEnum,
   question: z.string(),
   answers: z.array(z.string()).optional(),
   url: z.string().optional(),
@@ -45,7 +47,7 @@ const NodeDataSchema = z.object({
 type FormSchema = z.infer<typeof NodeDataSchema>;
 
 const initialValues: FormSchema = {
-  answerFieldType: 'inputBox',
+  answerFieldType: 'InputBox',
   name: '',
   question: '',
   answers: [],
@@ -84,7 +86,7 @@ const NodeSettings = ({
           <Formik
             initialValues={values}
             onSubmit={(values, { setSubmitting, validateForm, setErrors }) => {
-              editNode(mapFormValueToTreeStrc(values, currentNode));
+              editNode(mapFormValueToTreeSchema(values, currentNode));
               setSubmitting(false);
               onSubmit();
             }}
@@ -98,7 +100,7 @@ const NodeSettings = ({
                   <FormSelect
                     name="answerFieldType"
                     options={{
-                      values: [...answerFieldsValues],
+                      values: [...AnswerFields],
                       label: [
                         'Multiple Choice',
                         'Textarea',
@@ -116,7 +118,7 @@ const NodeSettings = ({
                       placeholder="Select the answer"
                     />
                   )}
-                  {values.answerFieldType === 'searchBox' && (
+                  {values.answerFieldType === 'SearchBox' && (
                     <FormInput name="url" placeholder="URL" />
                   )}
                   {
@@ -178,7 +180,10 @@ const NodeSettings = ({
   );
 };
 
-function mapFormValueToTreeStrc(values: FormSchema, node: TreeStrc): TreeStrc {
+function mapFormValueToTreeSchema(
+  values: FormSchema,
+  node: TreeSchema
+): TreeSchema {
   return {
     id: node.id,
     name: values.name,

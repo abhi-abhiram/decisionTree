@@ -1,11 +1,11 @@
 import {
   HamburgerIcon,
   AddIcon,
-  RepeatIcon,
   SettingsIcon,
   MoonIcon,
   SunIcon,
-  ArrowBackIcon,
+  ExternalLinkIcon,
+  CloseIcon,
 } from '@chakra-ui/icons';
 import {
   Menu,
@@ -15,7 +15,7 @@ import {
   MenuItem,
   useColorMode,
 } from '@chakra-ui/react';
-import { GrHomeRounded } from 'react-icons/gr';
+import { Link } from 'react-router-dom';
 
 const MenuComponent = () => {
   const { colorMode, toggleColorMode } = useColorMode();
@@ -32,9 +32,11 @@ const MenuComponent = () => {
       />
       <MenuList>
         <MenuItem icon={<AddIcon />}>Create New Tree</MenuItem>
-        <MenuItem icon={<GrHomeRounded stroke="white" />}>Home</MenuItem>
-        <MenuItem icon={<RepeatIcon />}>Open Closed Tab</MenuItem>
-        <MenuItem icon={<SettingsIcon />}>Settings</MenuItem>
+        <MenuItem icon={<ExternalLinkIcon />} as={Link} to="/home">
+          Home
+        </MenuItem>
+        <MenuItem icon={<ExternalLinkIcon />}>Dispaly Questions</MenuItem>
+        <MenuItem icon={<SettingsIcon />}>Manage The Tree</MenuItem>
         <MenuItem
           icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
           onClick={toggleColorMode}
@@ -43,6 +45,7 @@ const MenuComponent = () => {
             ? 'Switch to Dark Mode'
             : 'Switch to Light Mode'}
         </MenuItem>
+        <MenuItem icon={<CloseIcon />}>Close</MenuItem>
       </MenuList>
     </Menu>
   );
