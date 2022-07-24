@@ -1,55 +1,11 @@
 import { createContext, useReducer } from 'react';
-import { uid } from 'uid';
+import { v4 } from 'uuid';
 import { z } from 'zod';
-
-export const AnswerFields = [
-  'MultipleChoice',
-  'Textarea',
-  'SearchBox',
-  'InputBox',
-] as const;
-
-export const answerFieldsEnum = z.enum(AnswerFields);
-
-export type AnswerFieldsType = z.infer<typeof answerFieldsEnum>;
-
-export interface TreeSchema {
-  id: string;
-  name: string;
-  answerFieldType: AnswerFieldsType;
-  question: string;
-  answers?: string[];
-  children: TreeSchema[];
-  url?: string;
-  answer?: string;
-  parent?: TreeSchema;
-}
-
-export const treeSchema: z.ZodType<TreeSchema> = z.lazy(() =>
-  z.object({
-    id: z.string().uuid(),
-    name: z.string(),
-    answerFieldType: answerFieldsEnum,
-    question: z.string(),
-    answers: z.array(z.string()).optional(),
-    children: z.array(treeSchema),
-    url: z.string().optional(),
-    answer: z.string().optional(),
-    parent: treeSchema.optional(),
-  })
-);
+import { TreeCollection } from '../zodObj/TreeObjs';
 
 type TreeContextProviderProps = {
   children: React.ReactNode;
 };
-
-export const TreeCollection = z.object({
-  _id: z.string(),
-  treeName: z.string(),
-  tree: treeSchema,
-  createdAt: z.date(),
-  updatedAt: z.date(),
-});
 
 export type TreeCollectionType = z.infer<typeof TreeCollection>;
 
@@ -64,15 +20,15 @@ const initailState: TreeCollectionType = {
   tree: {
     name: 'root',
     answerFieldType: 'InputBox',
-    id: uid(10),
+    id: v4(),
     question: 'Question?',
     answers: [],
     children: [],
     url: '',
     answer: '',
   },
-  createdAt: new Date(),
-  updatedAt: new Date(),
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
 };
 
 const reducer = (prevState: TreeCollectionType, action: ACTIONTYPES) => {
@@ -93,7 +49,10 @@ type TreeContextType = {
   dispatch: React.Dispatch<ACTIONTYPES>;
 };
 
-export const TreeContext = createContext<TreeContextType | null>(null);
+export const TreeContext = createContext<TreeContextType>({
+  state: initailState,
+  dispatch: () => initailState,
+});
 
 export const TreeContextProvider: React.FC<TreeContextProviderProps> = ({
   children,

@@ -3,33 +3,25 @@ import {
   RenderCustomNodeElementFn,
 } from 'react-d3-tree/lib/types/common';
 import { Box, ButtonGroup, Button, Text } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import Tree from 'react-d3-tree';
-import { uid } from 'uid';
+import { v4 } from 'uuid';
 import NodeSettings from './components/NodeSettings';
 import { bfs, deleteBfs, editBfs } from './utils/nodeMethonds';
 import MenuComponent from './components/Menu';
-import { TreeSchema } from '../../context/TreeContext';
+import { TreeSchema } from '../../../types/TreeTypes';
+import { TreeContext } from '../../context/TreeContext';
 
 export function Index() {
-  const [tree, setTree] = useState<TreeSchema>({
-    name: 'root',
-    answerFieldType: 'InputBox',
-    id: uid(10),
-    question: 'Question?',
-    answers: [],
-    children: [],
-    url: '',
-    answer: '',
-  });
-
+  const treeContext = useContext(TreeContext);
+  const [tree, setTree] = useState<TreeSchema>(treeContext.state.tree);
   const [node, setNode] = useState<RawNodeDatum | undefined>(undefined);
 
   function addNode(node: TreeSchema) {
     const newNodeData: TreeSchema = {
       name: '',
       answerFieldType: 'InputBox',
-      id: uid(10),
+      id: v4(),
       question: '',
       answers: [],
       children: [],

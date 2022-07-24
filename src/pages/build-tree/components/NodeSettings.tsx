@@ -18,13 +18,10 @@ import { useMemo } from 'react';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
 import { AddIcon, MinusIcon } from '@chakra-ui/icons';
 import { z } from 'zod';
-import {
-  TreeSchema,
-  AnswerFields,
-  answerFieldsEnum,
-} from '../../../context/TreeContext';
 import FormInput from '../../../components/FormikComponents/FormInput';
 import FormSelect from '../../../components/FormikComponents/FormSelect';
+import { TreeSchema } from '../../../../types/TreeTypes';
+import { AnswerFields, AnswerFieldsZodObj } from '../../../zodObj/TreeObjs';
 
 type Props = {
   currentNode: TreeSchema;
@@ -37,7 +34,7 @@ type Props = {
 
 const NodeDataSchema = z.object({
   name: z.string(),
-  answerFieldType: answerFieldsEnum,
+  answerFieldType: AnswerFieldsZodObj,
   question: z.string(),
   answers: z.array(z.string()).optional(),
   url: z.string().optional(),

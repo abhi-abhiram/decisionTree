@@ -81,7 +81,6 @@ const Node: React.FC<props> = ({
         Node.children.length !== 0
       ) {
         setDisable(true);
-        console.log('called');
         setNodesQueue([...NodesQueue, Node.children[0]]);
       }
     } else if (value === '') {

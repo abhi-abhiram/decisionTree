@@ -1,6 +1,5 @@
 import {
   HamburgerIcon,
-  AddIcon,
   SettingsIcon,
   MoonIcon,
   SunIcon,
@@ -31,7 +30,6 @@ const MenuComponent = () => {
         right="30px"
       />
       <MenuList>
-        <MenuItem icon={<AddIcon />}>Create New Tree</MenuItem>
         <MenuItem icon={<ExternalLinkIcon />} as={Link} to="/home">
           Home
         </MenuItem>

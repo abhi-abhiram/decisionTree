@@ -7,8 +7,8 @@ import {
   ModalOverlay,
 } from '@chakra-ui/modal';
 import { Button } from '@chakra-ui/button';
-import { TreeSchema } from '../../../context/TreeContext';
 import { Input, VStack } from '@chakra-ui/react';
+import { TreeSchema } from '../../../../types/TreeTypes';
 
 type Props = {
   currentNode: TreeSchema;

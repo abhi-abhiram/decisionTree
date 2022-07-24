@@ -1,4 +1,4 @@
-import { TreeSchema } from '../../../context/TreeContext';
+import { TreeSchema } from '../../../../types/TreeTypes';
 
 export function bfs(id: string, tree: TreeSchema, node: TreeSchema) {
   const queue: TreeSchema[] = [];
