@@ -8,8 +8,8 @@ export default async function getData(req: VercelRequest, res: VercelResponse) {
   const { treeName } = req.body;
   const newTree: TreeCollection = {
     treeName,
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
     tree: {
       name: '',
       answerFieldType: 'InputBox',
