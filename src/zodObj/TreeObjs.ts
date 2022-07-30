@@ -20,7 +20,7 @@ export const TreeZodObj: z.ZodType<TreeSchema> = z.lazy(() =>
     children: z.array(TreeZodObj),
     url: z.string().optional(),
     answer: z.string().optional(),
-    parent: TreeZodObj.optional(),
+    parent: z.object({ answers: z.array(z.string()).optional() }).optional(),
   })
 );
 

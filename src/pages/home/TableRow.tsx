@@ -37,6 +37,7 @@ const TableRow: React.FC<Props> = ({ value, ...props }) => {
             setLoading({ ...isLoading, isLoadingQuesBtn: true });
             props.onClickQuesBtn().then(() => {
               setLoading({ ...isLoading, isLoadingQuesBtn: false });
+              navigateTo('/tree');
             });
           }}
           isLoading={isLoading.isLoadingQuesBtn}

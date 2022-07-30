@@ -22,6 +22,7 @@ import FormInput from '../../../components/FormikComponents/FormInput';
 import FormSelect from '../../../components/FormikComponents/FormSelect';
 import { TreeSchema } from '../../../../types/TreeTypes';
 import { AnswerFields, AnswerFieldsZodObj } from '../../../zodObj/TreeObjs';
+import { useAutoAnimate } from '@formkit/auto-animate/react';
 
 type Props = {
   currentNode: TreeSchema;
@@ -49,6 +50,53 @@ const initialValues: FormSchema = {
   question: '',
   answers: [],
   url: '',
+};
+
+const AnswersField = () => {
+  const [listref] = useAutoAnimate<HTMLDivElement>();
+  return (
+    <FieldArray name="answers">
+      {({ push, remove, form }) => {
+        const { values } = form;
+
+        return (
+          <FormControl>
+            <FormLabel textAlign={'center'}>Answers</FormLabel>
+            <VStack ref={listref}>
+              {values.answers?.length === 0 && (
+                <IconButton
+                  icon={<AddIcon />}
+                  aria-label="Add"
+                  m="0"
+                  onClick={() => push('')}
+                  alignSelf="flex-end"
+                />
+              )}
+              {values.answers?.map((value: string, index: number) => (
+                <Flex key={index} w="100%">
+                  <FormInput name={`answers[${index}]`} />
+                  <ButtonGroup colorScheme="green" ml="5px">
+                    <IconButton
+                      icon={<AddIcon />}
+                      aria-label="Add"
+                      m="0"
+                      onClick={() => push('')}
+                    />
+                    <IconButton
+                      icon={<MinusIcon />}
+                      aria-label="Minus"
+                      m="0"
+                      onClick={() => remove(index)}
+                    />
+                  </ButtonGroup>
+                </Flex>
+              ))}
+            </VStack>
+          </FormControl>
+        );
+      }}
+    </FieldArray>
+  );
 };
 
 const NodeSettings = ({
@@ -89,87 +137,49 @@ const NodeSettings = ({
             }}
             validationSchema={toFormikValidationSchema(NodeDataSchema)}
           >
-            {({ values, isSubmitting }) => (
-              <Form>
-                <VStack>
-                  <FormInput name="name" placeholder="Node Name" />
-                  <FormInput name="question" placeholder="Question" />
-                  <FormSelect
-                    name="answerFieldType"
-                    options={{
-                      values: [...AnswerFields],
-                      label: [
-                        'Multiple Choice',
-                        'Textarea',
-                        'Search Box',
-                        'Input Box',
-                      ],
-                    }}
-                  />
-                  {currentNode.parent?.answers && (
+            {({ values, isSubmitting }) => {
+              return (
+                <Form>
+                  <VStack>
+                    <FormInput name="name" placeholder="Node Name" />
+                    <FormInput name="question" placeholder="Question" />
                     <FormSelect
-                      name="answer"
+                      name="answerFieldType"
                       options={{
-                        values: currentNode.parent.answers,
+                        values: [...AnswerFields],
+                        label: [
+                          'Multiple Choice',
+                          'Textarea',
+                          'Search Box',
+                          'Input Box',
+                        ],
                       }}
-                      placeholder="Select the answer"
                     />
-                  )}
-                  {values.answerFieldType === 'SearchBox' && (
-                    <FormInput name="url" placeholder="URL" />
-                  )}
-                  {
-                    <FieldArray name="answers">
-                      {({ push, remove }) => {
-                        return (
-                          <FormControl>
-                            <FormLabel textAlign={'center'}>Answers</FormLabel>
-                            <VStack>
-                              {values.answers?.length === 0 && (
-                                <IconButton
-                                  icon={<AddIcon />}
-                                  aria-label="Add"
-                                  m="0"
-                                  onClick={() => push('')}
-                                  alignSelf="flex-end"
-                                />
-                              )}
-                              {values.answers?.map((value, index) => (
-                                <Flex key={index} w="100%">
-                                  <FormInput name={`answers[${index}]`} />
-                                  <ButtonGroup colorScheme="green" ml="5px">
-                                    <IconButton
-                                      icon={<AddIcon />}
-                                      aria-label="Add"
-                                      m="0"
-                                      onClick={() => push('')}
-                                    />
-                                    <IconButton
-                                      icon={<MinusIcon />}
-                                      aria-label="Minus"
-                                      m="0"
-                                      onClick={() => remove(index)}
-                                    />
-                                  </ButtonGroup>
-                                </Flex>
-                              ))}
-                            </VStack>
-                          </FormControl>
-                        );
-                      }}
-                    </FieldArray>
-                  }
-                  <Button
-                    disabled={isSubmitting}
-                    type="submit"
-                    variant="solid"
-                    colorScheme={'green'}
-                  >
-                    Save
-                  </Button>
-                </VStack>
-              </Form>
-            )}
+                    {currentNode.parent?.answers && (
+                      <FormSelect
+                        name="answer"
+                        options={{
+                          values: currentNode.parent.answers,
+                        }}
+                        placeholder="Select the answer"
+                      />
+                    )}
+                    {values.answerFieldType === 'SearchBox' && (
+                      <FormInput name="url" placeholder="URL" />
+                    )}
+                    {<AnswersField />}
+                    <Button
+                      disabled={isSubmitting}
+                      type="submit"
+                      variant="solid"
+                      colorScheme={'green'}
+                    >
+                      Save
+                    </Button>
+                  </VStack>
+                </Form>
+              );
+            }}
           </Formik>
         </ModalBody>
       </ModalContent>

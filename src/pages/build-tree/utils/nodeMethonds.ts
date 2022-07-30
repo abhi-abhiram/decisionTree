@@ -8,7 +8,7 @@ export function bfs(id: string, tree: TreeSchema, node: TreeSchema) {
     const curNode = queue.pop() as TreeSchema;
 
     if (curNode.id === id) {
-      node.parent = curNode;
+      node.parent = { answers: curNode.answers };
       curNode.children.push(node);
     }
     const len = curNode.children.length;
@@ -53,7 +53,7 @@ export function editBfs(id: string, node: TreeSchema, tree: TreeSchema) {
       curNode.url = node.url;
       curNode.answer = node.answer;
       curNode.children.forEach((value) => {
-        value.parent = curNode;
+        value.parent = { answers: curNode.answers };
       });
     }
     const len = curNode.children.length;

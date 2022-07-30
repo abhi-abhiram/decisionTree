@@ -89,7 +89,7 @@ export function Index() {
 
   return (
     <Box w="100%" h="100vh">
-      <MenuComponent />
+      <MenuComponent tree={tree} />
       <Tree
         data={tree as unknown as RawNodeDatum[]}
         renderCustomNodeElement={RenderCustomNode}

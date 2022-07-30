@@ -13,7 +13,7 @@ export interface TreeSchema {
   children: TreeSchema[];
   url?: string;
   answer?: string;
-  parent?: TreeSchema;
+  parent?: { answers?: string[] };
 }
 
 export type TreeCollection = {

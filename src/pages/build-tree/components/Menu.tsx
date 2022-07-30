@@ -6,6 +6,7 @@ import {
   ExternalLinkIcon,
   CloseIcon,
 } from '@chakra-ui/icons';
+import { AiOutlineSave } from 'react-icons/ai';
 import {
   Menu,
   MenuButton,
@@ -13,11 +14,34 @@ import {
   MenuList,
   MenuItem,
   useColorMode,
+  useToast,
 } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
+import { TreeContext } from '../../../context/TreeContext';
+import { useContext, useEffect, useState } from 'react';
+import axios from 'axios';
+import { TreeSchema } from '../../../../types/TreeTypes';
 
-const MenuComponent = () => {
+const MenuComponent = ({ tree }: { tree: TreeSchema }) => {
   const { colorMode, toggleColorMode } = useColorMode();
+  const treeContext = useContext(TreeContext);
+  const toast = useToast();
+  const [showToast, setShowToast] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (showToast) {
+      toast({
+        title: 'Uploaded Successfully',
+        status: 'success',
+        duration: 4000,
+        isClosable: true,
+        position: 'top',
+        onCloseComplete() {
+          setShowToast(false);
+        },
+      });
+    }
+  }, [showToast, toast]);
 
   return (
     <Menu>
@@ -30,13 +54,52 @@ const MenuComponent = () => {
         right="30px"
       />
       <MenuList>
-        <MenuItem icon={<ExternalLinkIcon />} as={Link} to="/home">
+        <MenuItem
+          icon={<ExternalLinkIcon fontSize="1rem" />}
+          as={Link}
+          to="/home"
+        >
           Home
         </MenuItem>
-        <MenuItem icon={<ExternalLinkIcon />}>Dispaly Questions</MenuItem>
-        <MenuItem icon={<SettingsIcon />}>Manage The Tree</MenuItem>
         <MenuItem
-          icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
+          icon={<ExternalLinkIcon fontSize="1rem" />}
+          as={Link}
+          to="/tree"
+        >
+          Dispaly Questions
+        </MenuItem>
+        <MenuItem icon={<SettingsIcon fontSize="1rem" />}>
+          Manage The Tree
+        </MenuItem>
+        <MenuItem
+          icon={<AiOutlineSave fontSize="1rem" />}
+          onClick={() => {
+            console.log(tree);
+            axios
+              .post('/api/update-tree', {
+                _id: treeContext.state._id,
+                tree,
+                treeName: treeContext.state.treeName,
+              })
+              .then(() => {
+                treeContext.dispatch({
+                  type: 'update',
+                  payload: { ...treeContext.state, tree },
+                });
+                setShowToast(true);
+              });
+          }}
+        >
+          Save
+        </MenuItem>
+        <MenuItem
+          icon={
+            colorMode === 'light' ? (
+              <MoonIcon fontSize="1rem" />
+            ) : (
+              <SunIcon fontSize="1rem" />
+            )
+          }
           onClick={toggleColorMode}
         >
           {colorMode === 'light'

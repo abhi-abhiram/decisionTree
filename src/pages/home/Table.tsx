@@ -171,7 +171,11 @@ const CustomTable = () => {
                         treeContext?.dispatch({ type: 'set', payload: value })
                       );
                     }}
-                    onClickQuesBtn={async () => {}}
+                    onClickQuesBtn={async () => {
+                      return getTreeById(value._id).then((value) =>
+                        treeContext?.dispatch({ type: 'set', payload: value })
+                      );
+                    }}
                     value={value}
                   />
                 );
