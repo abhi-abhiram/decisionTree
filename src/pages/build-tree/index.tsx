@@ -11,13 +11,15 @@ import { bfs, deleteBfs, editBfs } from './utils/nodeMethonds';
 import MenuComponent from './components/Menu';
 import { TreeSchema } from '../../../types/TreeTypes';
 import { TreeContext } from '../../context/TreeContext';
+import AddNode from './components/AddNode';
 
-export function Index() {
+export const Index = () => {
   const treeContext = useContext(TreeContext);
   const [tree, setTree] = useState<TreeSchema>(treeContext.state.tree);
   const [node, setNode] = useState<RawNodeDatum | undefined>(undefined);
+  const [nodeId, setNodeId] = useState<string | undefined>();
 
-  function addNode(node: TreeSchema) {
+  function addNode(id: string, newNode?: TreeSchema) {
     const newNodeData: TreeSchema = {
       name: '',
       answerFieldType: 'InputBox',
@@ -28,7 +30,7 @@ export function Index() {
       url: '',
       answer: '',
     };
-    const newTree = bfs(node.id, tree, newNodeData);
+    const newTree = bfs(id, tree, newNode ? newNode : newNodeData);
 
     setTree(newTree);
     setNode(newNodeData);
@@ -66,7 +68,8 @@ export function Index() {
           <ButtonGroup alignSelf="center" size="sm" margin="10px 10px">
             <Button
               onClick={() => {
-                addNode(nodeDatum as unknown as TreeSchema);
+                // addNode(nodeDatum as unknown as TreeSchema);
+                setNodeId((nodeDatum as unknown as TreeSchema).id);
               }}
             >
               Add
@@ -112,6 +115,13 @@ export function Index() {
         }}
         editNode={editNode}
       />
+      <AddNode
+        isOpen={Boolean(nodeId)}
+        onClose={() => setNodeId(undefined)}
+        addNodeMethod={(newNode?: TreeSchema) => {
+          if (nodeId) addNode(nodeId, newNode);
+        }}
+      />
     </Box>
   );
-}
+};

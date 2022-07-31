@@ -106,6 +106,7 @@ const CustomTable = () => {
   const { data, isLoading } = useQuery(['get-all-tree-names'], getTreesNames, {
     cacheTime: 0,
   });
+
   const [filteredData, setFilteredData] = useState<
     z.infer<typeof TreeNamesZodObj>
   >([]);
