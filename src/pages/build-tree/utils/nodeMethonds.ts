@@ -10,6 +10,7 @@ export function bfs(id: string, tree: TreeSchema, node: TreeSchema) {
     if (curNode.id === id) {
       node.parent = { answers: curNode.answers };
       curNode.children.push(node);
+      break;
     }
     const len = curNode.children.length;
     for (let i = 0; i < len; i++) {
