@@ -25,10 +25,10 @@ const initailState: TreeCollectionType = {
     answers: [],
     children: [],
     url: '',
-    answer: '',
   },
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
+  isCollection: false,
 };
 
 const reducer = (prevState: TreeCollectionType, action: ACTIONTYPES) => {

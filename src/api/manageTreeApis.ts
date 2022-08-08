@@ -24,6 +24,11 @@ export const getTreesNames = async () => {
   return TreeNamesZodObj.parse(res.data);
 };
 
+export const getOnlyTreeNames = async () => {
+  const res = await axios.get('/api/get-tree-names');
+  return TreeNamesZodObj.parse(res.data);
+};
+
 export const getTreeById = async (id: string) => {
   const { data } = await axios.post('/api/get-tree', { _id: id });
   return TreeCollection.parse(data);

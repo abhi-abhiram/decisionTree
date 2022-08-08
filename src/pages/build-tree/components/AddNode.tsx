@@ -14,14 +14,16 @@ import {
   Divider,
 } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { TreeSchema } from '../../../../types/TreeTypes';
+import { getCollectionName } from '../../../api/collectionApis';
 import { getTreeById, getTreesNames } from '../../../api/manageTreeApis';
+import { changeIds } from '../utils/nodeMethonds';
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  addNodeMethod: (newNode?: TreeSchema) => void;
+  addNodeMethod: (props: { node?: TreeSchema; nodes?: TreeSchema[] }) => void;
 }
 
 const OR = () => {
@@ -37,9 +39,14 @@ const OR = () => {
 };
 
 const AddNode: React.FC<Props> = ({ isOpen, onClose, addNodeMethod }) => {
-  const { data, isLoading } = useQuery(['get-tree-names'], getTreesNames);
+  const { data } = useQuery(['get-tree-names'], getTreesNames);
+  const collectionNames = useQuery(['get-collection-names'], getCollectionName);
   const SelectBuildNode = useRef<HTMLSelectElement>(null);
   const SelectCollectionNode = useRef<HTMLSelectElement>(null);
+  const [nodeLoading, setNodeLoading] = useState({
+    preBuildNode: false,
+    collectionNode: false,
+  });
 
   return (
     <>
@@ -53,9 +60,12 @@ const AddNode: React.FC<Props> = ({ isOpen, onClose, addNodeMethod }) => {
             <Stack spacing="24px">
               <Button
                 onClick={() => {
-                  addNodeMethod();
+                  addNodeMethod({});
                   onClose();
                 }}
+                isDisabled={Boolean(
+                  nodeLoading.collectionNode || nodeLoading.preBuildNode
+                )}
               >
                 Create New Node
               </Button>
@@ -77,11 +87,19 @@ const AddNode: React.FC<Props> = ({ isOpen, onClose, addNodeMethod }) => {
               <Button
                 onClick={() => {
                   const value = SelectBuildNode.current?.value;
-                  if (value)
+                  if (value) {
+                    setNodeLoading({ ...nodeLoading, preBuildNode: true });
                     getTreeById(value).then((value) => {
-                      addNodeMethod(value.tree);
+                      addNodeMethod({ node: value.tree });
+                      setNodeLoading({ ...nodeLoading, preBuildNode: false });
+                      onClose();
                     });
+                  }
                 }}
+                isDisabled={Boolean(
+                  nodeLoading.collectionNode || nodeLoading.preBuildNode
+                )}
+                isLoading={nodeLoading.preBuildNode}
               >
                 Add Node
               </Button>
@@ -93,13 +111,31 @@ const AddNode: React.FC<Props> = ({ isOpen, onClose, addNodeMethod }) => {
                   Select Node from Collection
                 </FormLabel>
                 <Select ref={SelectCollectionNode}>
-                  <option value="segun">Segun Adebayo</option>
-                  <option value="kola">Kola Tioluwani</option>
-                  <option value="kola">Kola Tioluwani</option>
+                  {collectionNames.data?.map((value, index) => {
+                    return (
+                      <option value={value._id} key={index}>
+                        {value.treeName}
+                      </option>
+                    );
+                  })}
                 </Select>
               </FormControl>
               <Button
-                onClick={() => console.log(SelectCollectionNode.current?.value)}
+                onClick={() => {
+                  const value = SelectCollectionNode.current?.value;
+                  if (value) {
+                    setNodeLoading({ ...nodeLoading, collectionNode: true });
+                    getTreeById(value).then((value) => {
+                      addNodeMethod({ nodes: changeIds(value.tree).children });
+                      setNodeLoading({ ...nodeLoading, collectionNode: false });
+                      onClose();
+                    });
+                  }
+                }}
+                isDisabled={Boolean(
+                  nodeLoading.collectionNode || nodeLoading.preBuildNode
+                )}
+                isLoading={nodeLoading.collectionNode}
               >
                 Add Node
               </Button>

@@ -7,6 +7,7 @@ import {
   CloseIcon,
 } from '@chakra-ui/icons';
 import { AiOutlineSave } from 'react-icons/ai';
+import { FaLayerGroup } from 'react-icons/fa';
 import {
   Menu,
   MenuButton,
@@ -22,7 +23,13 @@ import { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import { TreeSchema } from '../../../../types/TreeTypes';
 
-const MenuComponent = ({ tree }: { tree: TreeSchema }) => {
+const MenuComponent = ({
+  tree,
+  showCheckBox,
+}: {
+  tree: TreeSchema;
+  showCheckBox: () => void;
+}) => {
   const { colorMode, toggleColorMode } = useColorMode();
   const treeContext = useContext(TreeContext);
   const toast = useToast();
@@ -71,10 +78,12 @@ const MenuComponent = ({ tree }: { tree: TreeSchema }) => {
         <MenuItem icon={<SettingsIcon fontSize="1rem" />}>
           Manage The Tree
         </MenuItem>
+        <MenuItem icon={<FaLayerGroup />} onClick={showCheckBox}>
+          Create Collection
+        </MenuItem>
         <MenuItem
           icon={<AiOutlineSave fontSize="1rem" />}
           onClick={() => {
-            console.log(tree);
             axios
               .post('/api/update-tree', {
                 _id: treeContext.state._id,
@@ -106,6 +115,7 @@ const MenuComponent = ({ tree }: { tree: TreeSchema }) => {
             ? 'Switch to Dark Mode'
             : 'Switch to Light Mode'}
         </MenuItem>
+
         <MenuItem icon={<CloseIcon />}>Close</MenuItem>
       </MenuList>
     </Menu>

@@ -41,6 +41,9 @@ const TableRow: React.FC<Props> = ({ value, ...props }) => {
             });
           }}
           isLoading={isLoading.isLoadingQuesBtn}
+          isDisabled={Boolean(
+            isLoading.isLoadingEditBtn || isLoading.isLoadingQuesBtn
+          )}
         />
       </Td>
       <Td>
@@ -57,6 +60,9 @@ const TableRow: React.FC<Props> = ({ value, ...props }) => {
             });
           }}
           isLoading={isLoading.isLoadingEditBtn}
+          isDisabled={Boolean(
+            isLoading.isLoadingEditBtn || isLoading.isLoadingQuesBtn
+          )}
         />
       </Td>
       <Td>
@@ -67,6 +73,9 @@ const TableRow: React.FC<Props> = ({ value, ...props }) => {
           onClick={() => {
             props.onClickDeleteBtn().then(() => {});
           }}
+          isDisabled={Boolean(
+            isLoading.isLoadingEditBtn || isLoading.isLoadingQuesBtn
+          )}
         />
       </Td>
     </Tr>

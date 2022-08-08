@@ -1,3 +1,4 @@
+import { v4 } from 'uuid';
 import { TreeSchema } from '../../../../types/TreeTypes';
 
 export function bfs(id: string, tree: TreeSchema, node: TreeSchema) {
@@ -8,8 +9,35 @@ export function bfs(id: string, tree: TreeSchema, node: TreeSchema) {
     const curNode = queue.pop() as TreeSchema;
 
     if (curNode.id === id) {
-      node.parent = { answers: curNode.answers };
-      curNode.children.push(node);
+      node.parent = { id: curNode.id };
+      curNode.children.push(changeIds(node));
+      break;
+    }
+    const len = curNode.children.length;
+    for (let i = 0; i < len; i++) {
+      queue.unshift(curNode.children[i] as TreeSchema);
+    }
+  }
+  return { ...tree };
+}
+
+export function addMultipleChilds(
+  id: string,
+  tree: TreeSchema,
+  nodes: TreeSchema[]
+) {
+  const queue: TreeSchema[] = [];
+  queue.unshift(tree);
+
+  while (queue.length > 0) {
+    const curNode = queue.pop() as TreeSchema;
+
+    if (curNode.id === id) {
+      const newNodes = nodes.map((value) => {
+        value.parent = { id: curNode.id };
+        return changeIds(value);
+      });
+      curNode.children.push(...newNodes);
       break;
     }
     const len = curNode.children.length;
@@ -52,15 +80,31 @@ export function editBfs(id: string, node: TreeSchema, tree: TreeSchema) {
       curNode.answers = node.answers;
       curNode.children = node.children;
       curNode.url = node.url;
-      curNode.answer = node.answer;
       curNode.children.forEach((value) => {
-        value.parent = { answers: curNode.answers };
+        value.parent = { id: curNode.id };
       });
+      curNode.imgUrl = node.imgUrl;
     }
     const len = curNode.children.length;
     for (let i = 0; i < len; i++) {
       queue.unshift(curNode.children[i] as TreeSchema);
     }
   }
+  return { ...tree };
+}
+
+export function changeIds(tree: TreeSchema) {
+  const queue: TreeSchema[] = [];
+  queue.unshift(tree);
+
+  while (queue.length > 0) {
+    const curNode = queue.pop() as TreeSchema;
+    curNode.id = v4();
+    const len = curNode.children.length;
+    for (let i = 0; i < len; i++) {
+      queue.unshift(curNode.children[i] as TreeSchema);
+    }
+  }
+
   return { ...tree };
 }

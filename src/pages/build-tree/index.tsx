@@ -2,38 +2,61 @@ import {
   RawNodeDatum,
   RenderCustomNodeElementFn,
 } from 'react-d3-tree/lib/types/common';
-import { Box, ButtonGroup, Button, Text } from '@chakra-ui/react';
-import { useContext, useState } from 'react';
+import { Box, ButtonGroup, Button, Text, Checkbox } from '@chakra-ui/react';
+import { useContext, useEffect, useState } from 'react';
 import Tree from 'react-d3-tree';
 import { v4 } from 'uuid';
 import NodeSettings from './components/NodeSettings';
-import { bfs, deleteBfs, editBfs } from './utils/nodeMethonds';
+import {
+  addMultipleChilds,
+  bfs,
+  deleteBfs,
+  editBfs,
+} from './utils/nodeMethonds';
 import MenuComponent from './components/Menu';
 import { TreeSchema } from '../../../types/TreeTypes';
 import { TreeContext } from '../../context/TreeContext';
 import AddNode from './components/AddNode';
+import Collection from './components/Collection';
+import CollectionMenu from './components/CollectionMenu';
+import TreeMenu from './components/SwitchToTree';
 
 export const Index = () => {
   const treeContext = useContext(TreeContext);
   const [tree, setTree] = useState<TreeSchema>(treeContext.state.tree);
   const [node, setNode] = useState<RawNodeDatum | undefined>(undefined);
   const [nodeId, setNodeId] = useState<string | undefined>();
+  const [collection, setCollection] = useState(new Set<TreeSchema>([]));
+  const [showCheckBox, setShowCheckBox] = useState(false);
 
-  function addNode(id: string, newNode?: TreeSchema) {
-    const newNodeData: TreeSchema = {
-      name: '',
-      answerFieldType: 'InputBox',
-      id: v4(),
-      question: '',
-      answers: [],
-      children: [],
-      url: '',
-      answer: '',
-    };
-    const newTree = bfs(id, tree, newNode ? newNode : newNodeData);
+  useEffect(() => {
+    setTree(treeContext.state.tree);
+  }, [treeContext.state]);
 
+  function addNode(
+    id: string,
+    props: { node?: TreeSchema; nodes?: TreeSchema[] }
+  ) {
+    let newTree: TreeSchema;
+    if (props.node) {
+      newTree = bfs(id, tree, props.node);
+    } else if (props.nodes) {
+      newTree = addMultipleChilds(id, tree, props.nodes);
+    } else {
+      const newNodeData: TreeSchema = {
+        name: '',
+        answerFieldType: 'InputBox',
+        id: v4(),
+        question: '',
+        answers: [],
+        children: [],
+        url: '',
+        imgUrl: '',
+      };
+      newTree = bfs(id, tree, newNodeData);
+      setNode(newNodeData);
+    }
     setTree(newTree);
-    setNode(newNodeData);
   }
 
   function deleteNode(node: TreeSchema) {
@@ -49,6 +72,32 @@ export const Index = () => {
   const RenderCustomNode: RenderCustomNodeElementFn = ({ nodeDatum }) => {
     return (
       <>
+        {showCheckBox && (
+          <foreignObject
+            x="-13"
+            y="-60"
+            width="200px"
+            height="40px"
+            style={{ padding: '5px' }}
+          >
+            <Checkbox
+              m="auto"
+              size="lg"
+              onChange={(e) => {
+                const currentNode = nodeDatum as unknown as TreeSchema;
+                if (e.target.checked) {
+                  collection.add(currentNode);
+                  setCollection(new Set(collection));
+                } else {
+                  if (collection.has(currentNode)) {
+                    collection.delete(currentNode);
+                  }
+                }
+              }}
+            />
+          </foreignObject>
+        )}
+
         <circle
           r="25"
           color=""
@@ -61,38 +110,43 @@ export const Index = () => {
             setNode(nodeDatum);
           }}
         />
-        <foreignObject x="10" y="10" width="150px" height="100px">
+        <foreignObject x="10" y="10" width="150px" height="25px">
           <Text textAlign="left" fontWeight="semibold" marginLeft="10px">
             {nodeDatum.name}
           </Text>
-          <ButtonGroup alignSelf="center" size="sm" margin="10px 10px">
-            <Button
-              onClick={() => {
-                // addNode(nodeDatum as unknown as TreeSchema);
-                setNodeId((nodeDatum as unknown as TreeSchema).id);
-              }}
-            >
-              Add
-            </Button>
-            {!Boolean(nodeDatum?.attributes?.firstNode) && (
+        </foreignObject>
+        {!showCheckBox && (
+          <foreignObject x="10" y="30" width="150px" height="50px">
+            <ButtonGroup alignSelf="center" size="sm" margin="10px 10px">
               <Button
                 onClick={() => {
-                  deleteNode(nodeDatum as unknown as TreeSchema);
+                  setNodeId((nodeDatum as unknown as TreeSchema).id);
                 }}
-                color="red.600"
               >
-                Delete
+                Add
               </Button>
-            )}
-          </ButtonGroup>
-        </foreignObject>
+              {Boolean((nodeDatum as unknown as TreeSchema).parent) && (
+                <Button
+                  onClick={() => {
+                    deleteNode(nodeDatum as unknown as TreeSchema);
+                  }}
+                  color="red.600"
+                >
+                  Delete
+                </Button>
+              )}
+            </ButtonGroup>
+          </foreignObject>
+        )}
       </>
     );
   };
 
   return (
     <Box w="100%" h="100vh">
-      <MenuComponent tree={tree} />
+      <MenuComponent tree={tree} showCheckBox={() => setShowCheckBox(true)} />
+      <CollectionMenu />
+      <TreeMenu />
       <Tree
         data={tree as unknown as RawNodeDatum[]}
         renderCustomNodeElement={RenderCustomNode}
@@ -118,9 +172,14 @@ export const Index = () => {
       <AddNode
         isOpen={Boolean(nodeId)}
         onClose={() => setNodeId(undefined)}
-        addNodeMethod={(newNode?: TreeSchema) => {
-          if (nodeId) addNode(nodeId, newNode);
+        addNodeMethod={(props) => {
+          if (nodeId) addNode(nodeId, props);
         }}
+      />
+      <Collection
+        isOpen={showCheckBox}
+        onCancel={() => setShowCheckBox(false)}
+        collection={collection}
       />
     </Box>
   );

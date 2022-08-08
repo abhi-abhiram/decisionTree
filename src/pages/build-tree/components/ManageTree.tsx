@@ -6,7 +6,6 @@ import {
   ModalHeader,
   ModalOverlay,
 } from '@chakra-ui/modal';
-import { Button } from '@chakra-ui/button';
 import { Input, VStack } from '@chakra-ui/react';
 import { TreeSchema } from '../../../../types/TreeTypes';
 

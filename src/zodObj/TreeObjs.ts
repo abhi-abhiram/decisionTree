@@ -16,11 +16,18 @@ export const TreeZodObj: z.ZodType<TreeSchema> = z.lazy(() =>
     name: z.string(),
     answerFieldType: AnswerFieldsZodObj,
     question: z.string(),
-    answers: z.array(z.string()).optional(),
+    answers: z
+      .array(
+        z.object({
+          answerValue: z.string(),
+          childId: z.string().optional(),
+        })
+      )
+      .optional(),
     children: z.array(TreeZodObj),
     url: z.string().optional(),
-    answer: z.string().optional(),
-    parent: z.object({ answers: z.array(z.string()).optional() }).optional(),
+    parent: z.object({ id: z.string() }).optional(),
+    imgUrl: z.string().optional(),
   })
 );
 
@@ -28,6 +35,7 @@ export const TreeCollection = z.object({
   _id: z.string(),
   treeName: z.string(),
   tree: TreeZodObj,
+  isCollection: z.boolean(),
   createdAt: z.string(),
   updatedAt: z.string(),
 });

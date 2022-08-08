@@ -20,7 +20,7 @@ import { AddIcon, MinusIcon } from '@chakra-ui/icons';
 import { z } from 'zod';
 import FormInput from '../../../components/FormikComponents/FormInput';
 import FormSelect from '../../../components/FormikComponents/FormSelect';
-import { TreeSchema } from '../../../../types/TreeTypes';
+import { AnswersObj, TreeSchema } from '../../../../types/TreeTypes';
 import { AnswerFields, AnswerFieldsZodObj } from '../../../zodObj/TreeObjs';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
 
@@ -37,9 +37,16 @@ const NodeDataSchema = z.object({
   name: z.string(),
   answerFieldType: AnswerFieldsZodObj,
   question: z.string(),
-  answers: z.array(z.string()).optional(),
+  answers: z
+    .array(
+      z.object({
+        answerValue: z.string(),
+        childId: z.string().optional(),
+      })
+    )
+    .optional(),
   url: z.string().optional(),
-  answer: z.string().optional(),
+  imgUrl: z.string().optional(),
 });
 
 type FormSchema = z.infer<typeof NodeDataSchema>;
@@ -48,11 +55,12 @@ const initialValues: FormSchema = {
   answerFieldType: 'InputBox',
   name: '',
   question: '',
-  answers: [],
+  answers: [{ answerValue: '', childId: '' }],
   url: '',
+  imgUrl: '',
 };
 
-const AnswersField = () => {
+const AnswersField = ({ node }: { node: TreeSchema }) => {
   const [listref] = useAutoAnimate<HTMLDivElement>();
   return (
     <FieldArray name="answers">
@@ -72,15 +80,27 @@ const AnswersField = () => {
                   alignSelf="flex-end"
                 />
               )}
-              {values.answers?.map((value: string, index: number) => (
+              {values.answers?.map((value: AnswersObj, index: number) => (
                 <Flex key={index} w="100%">
-                  <FormInput name={`answers[${index}]`} />
+                  <FormInput name={`answers[${index}].answerValue`} />
+                  <FormSelect
+                    name={`answers[${index}].childId`}
+                    placeholder="Select the Child"
+                  >
+                    {node.children.map((value, index) => {
+                      return (
+                        <option value={value.id} key={index}>
+                          {value.name}
+                        </option>
+                      );
+                    })}
+                  </FormSelect>
                   <ButtonGroup colorScheme="green" ml="5px">
                     <IconButton
                       icon={<AddIcon />}
                       aria-label="Add"
                       m="0"
-                      onClick={() => push('')}
+                      onClick={() => push({ childId: '', answerValue: '' })}
                     />
                     <IconButton
                       icon={<MinusIcon />}
@@ -114,7 +134,7 @@ const NodeSettings = ({
         question: currentNode.question,
         answers: currentNode.answers,
         url: currentNode.url,
-        answer: currentNode.answer,
+        imgUrl: currentNode.imgUrl,
       };
     } else {
       return initialValues;
@@ -143,31 +163,17 @@ const NodeSettings = ({
                   <VStack>
                     <FormInput name="name" placeholder="Node Name" />
                     <FormInput name="question" placeholder="Question" />
-                    <FormSelect
-                      name="answerFieldType"
-                      options={{
-                        values: [...AnswerFields],
-                        label: [
-                          'Multiple Choice',
-                          'Textarea',
-                          'Search Box',
-                          'Input Box',
-                        ],
-                      }}
-                    />
-                    {currentNode.parent?.answers && (
-                      <FormSelect
-                        name="answer"
-                        options={{
-                          values: currentNode.parent.answers,
-                        }}
-                        placeholder="Select the answer"
-                      />
-                    )}
+                    <FormSelect name="answerFieldType">
+                      <option value={AnswerFields[0]}>Multiple Choice</option>
+                      <option value={AnswerFields[1]}>Textarea</option>
+                      <option value={AnswerFields[2]}>Search Box</option>
+                      <option value={AnswerFields[3]}>Input Box</option>
+                    </FormSelect>
                     {values.answerFieldType === 'SearchBox' && (
                       <FormInput name="url" placeholder="URL" />
                     )}
-                    {<AnswersField />}
+                    <FormInput name="imgUrl" placeholder="Enter Image Url" />
+                    <AnswersField node={currentNode} />
                     <Button
                       disabled={isSubmitting}
                       type="submit"
@@ -199,7 +205,7 @@ function mapFormValueToTreeSchema(
     question: values.question,
     answers: values.answers,
     url: values.url,
-    answer: values.answer,
+    imgUrl: values.imgUrl,
   };
 }
 

@@ -18,8 +18,9 @@ export default async function getData(req: VercelRequest, res: VercelResponse) {
       answers: [],
       children: [],
       url: '',
-      answer: '',
+      imgUrl: '',
     },
+    isCollection: false,
   };
 
   await db.collection('Tree').insertOne(newTree);
