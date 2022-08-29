@@ -153,7 +153,10 @@ const AddNode: React.FC<Props> = ({ isOpen, onClose, addNodeMethod }) => {
           collections
         )}
         isOpen={showCollection}
-        onClose={() => setShowCollection(false)}
+        onClose={() => {
+          setShowCollection(false);
+          onClose();
+        }}
         onAdd={(ids) => {
           const collection = collections?.find((value) => {
             return value._id === SelectCollectionNode.current?.value;
@@ -240,7 +243,14 @@ const SelectNodes: React.FC<{
         </ModalBody>
 
         <ModalFooter>
-          <Button colorScheme='blue' mr={3} onClick={() => onAdd(checkedItems)}>
+          <Button
+            colorScheme='blue'
+            mr={3}
+            onClick={() => {
+              onAdd(checkedItems);
+              onClose();
+            }}
+          >
             Add
           </Button>
           <Button

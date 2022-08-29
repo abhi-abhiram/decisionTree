@@ -13,9 +13,12 @@ export function bfs(id: string, tree: TreeSchema, node: TreeSchema) {
       curNode.children.push(changeIds(node));
       break;
     }
-    const len = curNode.children.length;
-    for (let i = 0; i < len; i++) {
-      queue.unshift(curNode.children[i] as TreeSchema);
+
+    if ('children' in curNode) {
+      const len = curNode.children.length;
+      for (let i = 0; i < len; i++) {
+        queue.unshift(curNode.children[i] as TreeSchema);
+      }
     }
   }
   return { ...tree };
@@ -44,9 +47,12 @@ export function addMultipleChilds(
       curNode.children.push(...newNodes);
       break;
     }
-    const len = curNode.children.length;
-    for (let i = 0; i < len; i++) {
-      queue.unshift(curNode.children[i] as TreeSchema);
+
+    if ('children' in curNode) {
+      const len = curNode.children.length;
+      for (let i = 0; i < len; i++) {
+        queue.unshift(curNode.children[i] as TreeSchema);
+      }
     }
   }
   return { ...tree };
@@ -58,13 +64,15 @@ export function deleteBfs(id: string, tree: TreeSchema) {
 
   while (queue.length > 0) {
     const curNode = queue.pop() as TreeSchema;
-    const len = curNode.children.length;
-    for (let i = 0; i < len; i++) {
-      if (curNode.children[i].id === id) {
-        curNode.children.splice(i, 1);
-        break;
+    if ('children' in curNode) {
+      const len = curNode.children.length;
+      for (let i = 0; i < len; i++) {
+        if (curNode.children[i].id === id) {
+          curNode.children.splice(i, 1);
+          break;
+        }
+        queue.unshift(curNode.children[i] as TreeSchema);
       }
-      queue.unshift(curNode.children[i] as TreeSchema);
     }
   }
 
@@ -109,9 +117,12 @@ export function changeIds(tree: TreeSchema): TreeSchema {
     if ('children' in curNode) {
       curNode.id = v4();
     }
-    const len = curNode.children.length;
-    for (let i = 0; i < len; i++) {
-      queue.unshift(curNode.children[i] as TreeSchema);
+
+    if ('children' in curNode) {
+      const len = curNode.children.length;
+      for (let i = 0; i < len; i++) {
+        queue.unshift(curNode.children[i] as TreeSchema);
+      }
     }
   }
 
