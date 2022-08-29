@@ -12,10 +12,7 @@ export default async function getData(req: VercelRequest, res: VercelResponse) {
   const db = await connectToDB();
   const data = await db
     .collection('Tree')
-    .find<T>(
-      { isCollection: false },
-      { projection: { treeName: 1, createdAt: 1, updatedAt: 1 } }
-    )
+    .find<T>({}, { projection: { treeName: 1, createdAt: 1, updatedAt: 1 } })
     .toArray();
   res.json(data);
 }

@@ -1,5 +1,5 @@
 import { v4 } from 'uuid';
-import { TreeSchema } from '../../../../types/TreeTypes';
+import { Children, TreeSchema } from '../../../../types/TreeTypes';
 
 export function bfs(id: string, tree: TreeSchema, node: TreeSchema) {
   const queue: TreeSchema[] = [];
@@ -24,7 +24,7 @@ export function bfs(id: string, tree: TreeSchema, node: TreeSchema) {
 export function addMultipleChilds(
   id: string,
   tree: TreeSchema,
-  nodes: TreeSchema[]
+  nodes: Children
 ) {
   const queue: TreeSchema[] = [];
   queue.unshift(tree);
@@ -33,9 +33,13 @@ export function addMultipleChilds(
     const curNode = queue.pop() as TreeSchema;
 
     if (curNode.id === id) {
-      const newNodes = nodes.map((value) => {
+      const newNodes: Children = nodes.map((value) => {
         value.parent = { id: curNode.id };
-        return changeIds(value);
+        if ('children' in value) {
+          return changeIds(value);
+        } else {
+          return value;
+        }
       });
       curNode.children.push(...newNodes);
       break;
@@ -85,21 +89,26 @@ export function editBfs(id: string, node: TreeSchema, tree: TreeSchema) {
       });
       curNode.imgUrl = node.imgUrl;
     }
-    const len = curNode.children.length;
-    for (let i = 0; i < len; i++) {
-      queue.unshift(curNode.children[i] as TreeSchema);
+
+    if ('children' in curNode) {
+      const len = curNode.children.length;
+      for (let i = 0; i < len; i++) {
+        queue.unshift(curNode.children[i] as TreeSchema);
+      }
     }
   }
   return { ...tree };
 }
 
-export function changeIds(tree: TreeSchema) {
+export function changeIds(tree: TreeSchema): TreeSchema {
   const queue: TreeSchema[] = [];
   queue.unshift(tree);
 
   while (queue.length > 0) {
     const curNode = queue.pop() as TreeSchema;
-    curNode.id = v4();
+    if ('children' in curNode) {
+      curNode.id = v4();
+    }
     const len = curNode.children.length;
     for (let i = 0; i < len; i++) {
       queue.unshift(curNode.children[i] as TreeSchema);

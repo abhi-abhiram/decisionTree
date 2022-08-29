@@ -12,7 +12,7 @@ export const AnswerFieldsZodObj = z.enum(AnswerFields);
 
 export const TreeZodObj: z.ZodType<TreeSchema> = z.lazy(() =>
   z.object({
-    id: z.string().uuid(),
+    id: z.string(),
     name: z.string(),
     answerFieldType: AnswerFieldsZodObj,
     question: z.string(),
@@ -24,7 +24,15 @@ export const TreeZodObj: z.ZodType<TreeSchema> = z.lazy(() =>
         })
       )
       .optional(),
-    children: z.array(TreeZodObj),
+    children: z.array(
+      TreeZodObj.or(
+        z.object({
+          name: z.string(),
+          parent: z.object({ id: z.string() }).optional(),
+          id: z.string(),
+        })
+      )
+    ),
     url: z.string().optional(),
     parent: z.object({ id: z.string() }).optional(),
     imgUrl: z.string().optional(),

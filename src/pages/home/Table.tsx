@@ -85,12 +85,12 @@ const Search: React.FC<SearchProps<z.infer<typeof TreeNamesZodObj>>> = ({
         }}
         value={wordEntered}
         onChange={handleFilter}
-        border="none"
-        placeholder="Search Tree Name"
+        border='none'
+        placeholder='Search Tree Name'
       />
       <InputRightAddon
-        background="transparent"
-        border="none"
+        background='transparent'
+        border='none'
         onClick={() => {
           if (wordEntered !== '') clearInput();
         }}
@@ -119,13 +119,13 @@ const CustomTable = () => {
     <>
       {!isLoading && (
         <TableContainer
-          w="80%"
-          m="auto"
+          w='80%'
+          m='auto'
           borderWidth={1}
           borderRadius={8}
-          borderBottom="none"
-          maxH="80vh"
-          overflowY="auto"
+          borderBottom='none'
+          maxH='80vh'
+          overflowY='auto'
           css={{
             '&::-webkit-scrollbar': {
               width: '4px',
@@ -141,20 +141,20 @@ const CustomTable = () => {
             },
           }}
         >
-          <Table variant="simple">
+          <Table variant='simple'>
             <Thead>
               <Tr>
-                <Th textAlign="center">
+                <Th textAlign='center'>
                   <Search
                     filteredData={filteredData}
                     setFilteredData={setFilteredData}
                   />
                 </Th>
-                <Th textAlign="center">created At</Th>
-                <Th textAlign="center">last updated</Th>
-                <Th textAlign="center"></Th>
-                <Th textAlign="center"></Th>
-                <Th textAlign="center"></Th>
+                <Th textAlign='center'>created At</Th>
+                <Th textAlign='center'>last updated</Th>
+                <Th textAlign='center'></Th>
+                <Th textAlign='center'></Th>
+                <Th textAlign='center'></Th>
               </Tr>
             </Thead>
             <Tbody>
@@ -195,7 +195,7 @@ const CustomTable = () => {
         onClose={onClose}
       />
       {isLoading && (
-        <Center w="100%" h="80vh">
+        <Center w='100%' h='80vh'>
           <Spinner />
         </Center>
       )}

@@ -9,13 +9,18 @@ export interface AnswersObj {
   childId?: string;
 }
 
+export type Children = (
+  | TreeSchema
+  | { name: string; id: string; parent?: { id: string } }
+)[];
+
 export interface TreeSchema {
   id: string;
   name: string;
   answerFieldType: AnswerFields;
   question: string;
   answers?: AnswersObj[];
-  children: TreeSchema[];
+  children: Children;
   url?: string;
   parent?: { id: string };
   imgUrl?: string;
@@ -28,3 +33,11 @@ export type TreeCollection = {
   createdAt: string;
   updatedAt: string;
 };
+
+export interface Collection {
+  _id: string;
+  name: string;
+  nodes: { treeName: string; _id: string }[];
+  createdAt: string;
+  updatedAt: string;
+}

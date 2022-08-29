@@ -21,27 +21,28 @@ export const Component: React.FC<Props> = ({ node, index, isDisabled }) => {
   switch (node.answerFieldType) {
     case 'InputBox':
       return (
-        <Box w="100%" display="flex" alignItems="center" p={2}>
+        <Box w='100%' display='flex' alignItems='center' p={2}>
           <FormInput
             name={`values[${index}].answer`}
             label={node.question}
             isDisabled={isDisabled}
           />
           {node.imgUrl && (
-            <Box display="flex">
-              <Divider orientation="vertical" h="auto" m="0 3rem" />
-              <Image src={node.imgUrl} maxW="500px" />
+            <Box display='flex'>
+              <Divider orientation='vertical' h='auto' m='0 3rem' />
+              <Image src={node.imgUrl} maxW='500px' />
             </Box>
           )}
         </Box>
       );
     case 'MultipleChoice':
       return (
-        <Box w="100%" display="flex" alignItems="center" p={2}>
+        <Box w='100%' display='flex' alignItems='center' p={2}>
           <FromSelect
             name={`values[${index}].answer`}
             label={node.question}
             isDisabled={isDisabled}
+            placeholder='Select an option'
           >
             {node.answers?.map((value, index) => {
               return (
@@ -52,25 +53,25 @@ export const Component: React.FC<Props> = ({ node, index, isDisabled }) => {
             })}
           </FromSelect>
           {node.imgUrl && (
-            <Box display="flex">
-              <Divider orientation="vertical" h="auto" m="0 3rem" />
-              <Image src={node.imgUrl} maxW="500px" />
+            <Box display='flex'>
+              <Divider orientation='vertical' h='auto' m='0 3rem' />
+              <Image src={node.imgUrl} maxW='500px' />
             </Box>
           )}
         </Box>
       );
     case 'Textarea':
       return (
-        <Box w="100%" display="flex" alignItems="center" p={2}>
+        <Box w='100%' display='flex' alignItems='center' p={2}>
           <FormTextarea
             name={`values[${index}].answer`}
             label={node.question}
             isDisabled={isDisabled}
           />
           {node.imgUrl && (
-            <Box display="flex">
-              <Divider orientation="vertical" h="auto" m="0 3rem" />
-              <Image src={node.imgUrl} maxW="500px" />
+            <Box display='flex'>
+              <Divider orientation='vertical' h='auto' m='0 3rem' />
+              <Image src={node.imgUrl} maxW='500px' />
             </Box>
           )}
         </Box>

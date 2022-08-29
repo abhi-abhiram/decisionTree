@@ -12,25 +12,32 @@ import {
   FormControl,
   Heading,
   Divider,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Checkbox,
 } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { useRef, useState } from 'react';
-import { TreeSchema } from '../../../../types/TreeTypes';
-import { getCollectionName } from '../../../api/collectionApis';
+import { Children, Collection, TreeSchema } from '../../../../types/TreeTypes';
+import { getCollections } from '../../../api/collectionApis';
 import { getTreeById, getTreesNames } from '../../../api/manageTreeApis';
-import { changeIds } from '../utils/nodeMethonds';
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  addNodeMethod: (props: { node?: TreeSchema; nodes?: TreeSchema[] }) => void;
+  addNodeMethod: (props: { node?: TreeSchema; nodes?: Children }) => void;
 }
 
 const OR = () => {
   return (
-    <Stack direction="row" alignItems="center">
+    <Stack direction='row' alignItems='center'>
       <Divider />
-      <Heading fontWeight="normal" fontSize="sm">
+      <Heading fontWeight='normal' fontSize='sm'>
         OR
       </Heading>
       <Divider />
@@ -40,24 +47,25 @@ const OR = () => {
 
 const AddNode: React.FC<Props> = ({ isOpen, onClose, addNodeMethod }) => {
   const { data } = useQuery(['get-tree-names'], getTreesNames);
-  const collectionNames = useQuery(['get-collection-names'], getCollectionName);
+  const { data: collections } = useQuery(['get-collections'], getCollections);
   const SelectBuildNode = useRef<HTMLSelectElement>(null);
   const SelectCollectionNode = useRef<HTMLSelectElement>(null);
   const [nodeLoading, setNodeLoading] = useState({
     preBuildNode: false,
     collectionNode: false,
   });
+  const [showCollection, setShowCollection] = useState(false);
 
   return (
     <>
-      <Drawer isOpen={isOpen} placement="right" onClose={onClose}>
+      <Drawer isOpen={isOpen} placement='right' onClose={onClose}>
         <DrawerOverlay />
         <DrawerContent>
           <DrawerCloseButton />
-          <DrawerHeader borderBottomWidth="1px">Add Node</DrawerHeader>
+          <DrawerHeader borderBottomWidth='1px'>Add Node</DrawerHeader>
 
           <DrawerBody>
-            <Stack spacing="24px">
+            <Stack spacing='24px'>
               <Button
                 onClick={() => {
                   addNodeMethod({});
@@ -73,7 +81,7 @@ const AddNode: React.FC<Props> = ({ isOpen, onClose, addNodeMethod }) => {
               <OR />
 
               <FormControl>
-                <FormLabel htmlFor="url">Select Build Node</FormLabel>
+                <FormLabel htmlFor='url'>Select Build Node</FormLabel>
                 <Select ref={SelectBuildNode}>
                   {data?.map((values, index) => {
                     return (
@@ -107,14 +115,14 @@ const AddNode: React.FC<Props> = ({ isOpen, onClose, addNodeMethod }) => {
               <OR />
 
               <FormControl>
-                <FormLabel htmlFor="owner">
+                <FormLabel htmlFor='owner'>
                   Select Node from Collection
                 </FormLabel>
                 <Select ref={SelectCollectionNode}>
-                  {collectionNames.data?.map((value, index) => {
+                  {collections?.map((value, index) => {
                     return (
                       <option value={value._id} key={index}>
-                        {value.treeName}
+                        {value.name}
                       </option>
                     );
                   })}
@@ -122,14 +130,9 @@ const AddNode: React.FC<Props> = ({ isOpen, onClose, addNodeMethod }) => {
               </FormControl>
               <Button
                 onClick={() => {
-                  const value = SelectCollectionNode.current?.value;
-                  if (value) {
-                    setNodeLoading({ ...nodeLoading, collectionNode: true });
-                    getTreeById(value).then((value) => {
-                      addNodeMethod({ nodes: changeIds(value.tree).children });
-                      setNodeLoading({ ...nodeLoading, collectionNode: false });
-                      onClose();
-                    });
+                  const id = SelectCollectionNode.current?.value;
+                  if (id) {
+                    setShowCollection(true);
                   }
                 }}
                 isDisabled={Boolean(
@@ -143,8 +146,125 @@ const AddNode: React.FC<Props> = ({ isOpen, onClose, addNodeMethod }) => {
           </DrawerBody>
         </DrawerContent>
       </Drawer>
+
+      <SelectNodes
+        collection={getCollection(
+          SelectCollectionNode.current?.value,
+          collections
+        )}
+        isOpen={showCollection}
+        onClose={() => setShowCollection(false)}
+        onAdd={(ids) => {
+          const collection = collections?.find((value) => {
+            return value._id === SelectCollectionNode.current?.value;
+          });
+          const nodes: Children = [];
+
+          collection?.nodes.forEach((value) => {
+            if (ids.has(value._id)) {
+              nodes.push({
+                name: value.treeName,
+                id: value._id,
+              });
+            }
+          });
+          addNodeMethod({
+            nodes: nodes,
+          });
+        }}
+      />
     </>
   );
+};
+
+const SelectNodes: React.FC<{
+  collection?: Collection;
+  isOpen: boolean;
+  onClose: () => void;
+  onAdd: (ids: Set<string>) => void;
+}> = ({ collection, isOpen, onClose, onAdd }) => {
+  const [checkedItems, setCheckedItems] = useState(new Set<string>());
+
+  const allChecked = checkedItems.size === collection?.nodes?.length;
+  const isIndeterminate = checkedItems.size > 0 && !allChecked;
+
+  return (
+    <Modal
+      isOpen={isOpen}
+      onClose={() => {
+        setCheckedItems(new Set());
+        onClose();
+      }}
+    >
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>Select nodes from collection</ModalHeader>
+        <ModalCloseButton />
+        <ModalBody pb={6}>
+          <Checkbox
+            isChecked={allChecked}
+            isIndeterminate={isIndeterminate}
+            onChange={(e) => {
+              if (allChecked) {
+                setCheckedItems(new Set());
+              } else {
+                setCheckedItems(
+                  new Set(collection?.nodes.map((value) => value._id))
+                );
+              }
+            }}
+          >
+            Select All
+          </Checkbox>
+          <Stack pl={6} mt={1} spacing={1}>
+            {collection?.nodes.map((value) => {
+              return (
+                <Checkbox
+                  isChecked={checkedItems.has(value._id)}
+                  onChange={() => {
+                    if (checkedItems.has(value._id)) {
+                      checkedItems.delete(value._id);
+                    } else {
+                      checkedItems.add(value._id);
+                    }
+
+                    setCheckedItems(new Set(checkedItems));
+                  }}
+                  key={value._id}
+                >
+                  {value.treeName}
+                </Checkbox>
+              );
+            })}
+          </Stack>
+        </ModalBody>
+
+        <ModalFooter>
+          <Button colorScheme='blue' mr={3} onClick={() => onAdd(checkedItems)}>
+            Add
+          </Button>
+          <Button
+            onClick={() => {
+              setCheckedItems(new Set());
+              onClose();
+            }}
+          >
+            Cancel
+          </Button>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
+  );
+};
+
+const getCollection = (id?: string, collections?: Collection[]) => {
+  if (collections) {
+    for (const collection of collections) {
+      if (collection._id === id) {
+        return collection;
+      }
+    }
+  }
 };
 
 export default AddNode;

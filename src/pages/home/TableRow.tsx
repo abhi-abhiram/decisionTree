@@ -10,6 +10,7 @@ interface Props {
     treeName: string;
     createdAt: string;
     updatedAt: string;
+    isCollection?: boolean;
   };
   onClickEditBtn: () => Promise<void>;
   onClickDeleteBtn: () => Promise<void>;
@@ -25,14 +26,14 @@ const TableRow: React.FC<Props> = ({ value, ...props }) => {
 
   return (
     <Tr>
-      <Td textAlign="center">{value.treeName}</Td>
-      <Td textAlign="center">{new Date(value.createdAt).toDateString()}</Td>
-      <Td textAlign="center">{new Date(value.updatedAt).toDateString()}</Td>
+      <Td textAlign='center'>{value.treeName}</Td>
+      <Td textAlign='center'>{new Date(value.createdAt).toDateString()}</Td>
+      <Td textAlign='center'>{new Date(value.updatedAt).toDateString()}</Td>
       <Td>
         <CustomButton
           icon={<ExternalLinkIcon />}
-          aria-label="display questions"
-          variant="outline"
+          aria-label='display questions'
+          variant='outline'
           onClick={() => {
             setLoading({ ...isLoading, isLoadingQuesBtn: true });
             props.onClickQuesBtn().then(() => {
@@ -49,8 +50,8 @@ const TableRow: React.FC<Props> = ({ value, ...props }) => {
       <Td>
         <CustomButton
           icon={<EditIcon />}
-          aria-label="edit"
-          variant="outline"
+          aria-label='edit'
+          variant='outline'
           onClick={() => {
             setLoading({ ...isLoading, isLoadingEditBtn: true });
 
@@ -67,9 +68,9 @@ const TableRow: React.FC<Props> = ({ value, ...props }) => {
       </Td>
       <Td>
         <CustomButton
-          icon={<DeleteIcon color="red.400" />}
-          aria-label="delete"
-          variant="outline"
+          icon={<DeleteIcon color='red.400' />}
+          aria-label='delete'
+          variant='outline'
           onClick={() => {
             props.onClickDeleteBtn().then(() => {});
           }}

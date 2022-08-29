@@ -20,7 +20,7 @@ const FormInput: React.FC<Props> = ({
   formLabelProps,
   ...props
 }) => {
-  const [field, meta, helpers] = useField(name);
+  const [field, meta] = useField(name);
   const isError = Boolean(meta.touched && meta.error);
 
   return (

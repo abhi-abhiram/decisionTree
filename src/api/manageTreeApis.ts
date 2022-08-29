@@ -16,6 +16,7 @@ export const TreeNamesZodObj = z.array(
     treeName: z.string(),
     createdAt: z.string(),
     updatedAt: z.string(),
+    isCollection: z.boolean().optional(),
   })
 );
 

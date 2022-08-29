@@ -63,7 +63,7 @@ const initialValues: FormSchema = {
 const AnswersField = ({ node }: { node: TreeSchema }) => {
   const [listref] = useAutoAnimate<HTMLDivElement>();
   return (
-    <FieldArray name="answers">
+    <FieldArray name='answers'>
       {({ push, remove, form }) => {
         const { values } = form;
 
@@ -74,18 +74,18 @@ const AnswersField = ({ node }: { node: TreeSchema }) => {
               {values.answers?.length === 0 && (
                 <IconButton
                   icon={<AddIcon />}
-                  aria-label="Add"
-                  m="0"
+                  aria-label='Add'
+                  m='0'
                   onClick={() => push('')}
-                  alignSelf="flex-end"
+                  alignSelf='flex-end'
                 />
               )}
               {values.answers?.map((value: AnswersObj, index: number) => (
-                <Flex key={index} w="100%">
+                <Flex key={index} w='100%'>
                   <FormInput name={`answers[${index}].answerValue`} />
                   <FormSelect
                     name={`answers[${index}].childId`}
-                    placeholder="Select the Child"
+                    placeholder='Select the Child'
                   >
                     {node.children.map((value, index) => {
                       return (
@@ -95,17 +95,17 @@ const AnswersField = ({ node }: { node: TreeSchema }) => {
                       );
                     })}
                   </FormSelect>
-                  <ButtonGroup colorScheme="green" ml="5px">
+                  <ButtonGroup colorScheme='green' ml='5px'>
                     <IconButton
                       icon={<AddIcon />}
-                      aria-label="Add"
-                      m="0"
+                      aria-label='Add'
+                      m='0'
                       onClick={() => push({ childId: '', answerValue: '' })}
                     />
                     <IconButton
                       icon={<MinusIcon />}
-                      aria-label="Minus"
-                      m="0"
+                      aria-label='Minus'
+                      m='0'
                       onClick={() => remove(index)}
                     />
                   </ButtonGroup>
@@ -150,34 +150,38 @@ const NodeSettings = ({
         <ModalBody>
           <Formik
             initialValues={values}
-            onSubmit={(values, { setSubmitting, validateForm, setErrors }) => {
-              editNode(mapFormValueToTreeSchema(values, currentNode));
+            onSubmit={(values, { setSubmitting }) => {
+              try {
+                editNode(mapFormValueToTreeSchema(values, currentNode));
+              } catch (error) {
+                console.error(error);
+              }
               setSubmitting(false);
               onSubmit();
             }}
             validationSchema={toFormikValidationSchema(NodeDataSchema)}
           >
-            {({ values, isSubmitting }) => {
+            {({ values, isSubmitting, errors }) => {
               return (
                 <Form>
                   <VStack>
-                    <FormInput name="name" placeholder="Node Name" />
-                    <FormInput name="question" placeholder="Question" />
-                    <FormSelect name="answerFieldType">
+                    <FormInput name='name' placeholder='Node Name' />
+                    <FormInput name='question' placeholder='Question' />
+                    <FormSelect name='answerFieldType'>
                       <option value={AnswerFields[0]}>Multiple Choice</option>
                       <option value={AnswerFields[1]}>Textarea</option>
                       <option value={AnswerFields[2]}>Search Box</option>
                       <option value={AnswerFields[3]}>Input Box</option>
                     </FormSelect>
                     {values.answerFieldType === 'SearchBox' && (
-                      <FormInput name="url" placeholder="URL" />
+                      <FormInput name='url' placeholder='URL' />
                     )}
-                    <FormInput name="imgUrl" placeholder="Enter Image Url" />
+                    <FormInput name='imgUrl' placeholder='Enter Image Url' />
                     <AnswersField node={currentNode} />
                     <Button
                       disabled={isSubmitting}
-                      type="submit"
-                      variant="solid"
+                      type='submit'
+                      variant='solid'
                       colorScheme={'green'}
                     >
                       Save

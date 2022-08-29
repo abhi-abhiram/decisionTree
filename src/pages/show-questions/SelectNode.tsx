@@ -1,4 +1,5 @@
-import { AnswersObj, TreeSchema } from '../../../types/TreeTypes';
+import { AnswersObj } from '../../../types/TreeTypes';
+import { TreeSchema } from './type';
 
 export const getChild = (node: TreeSchema, ans: string) => {
   const childId = getAnsObj(node.answers, ans);

@@ -2,7 +2,7 @@ import {
   RawNodeDatum,
   RenderCustomNodeElementFn,
 } from 'react-d3-tree/lib/types/common';
-import { Box, ButtonGroup, Button, Text, Checkbox } from '@chakra-ui/react';
+import { Box, ButtonGroup, Button, Text } from '@chakra-ui/react';
 import { useContext, useEffect, useState } from 'react';
 import Tree from 'react-d3-tree';
 import { v4 } from 'uuid';
@@ -14,29 +14,21 @@ import {
   editBfs,
 } from './utils/nodeMethonds';
 import MenuComponent from './components/Menu';
-import { TreeSchema } from '../../../types/TreeTypes';
+import { Children, TreeSchema } from '../../../types/TreeTypes';
 import { TreeContext } from '../../context/TreeContext';
 import AddNode from './components/AddNode';
-import Collection from './components/Collection';
-import CollectionMenu from './components/CollectionMenu';
-import TreeMenu from './components/SwitchToTree';
 
 export const Index = () => {
   const treeContext = useContext(TreeContext);
   const [tree, setTree] = useState<TreeSchema>(treeContext.state.tree);
   const [node, setNode] = useState<RawNodeDatum | undefined>(undefined);
   const [nodeId, setNodeId] = useState<string | undefined>();
-  const [collection, setCollection] = useState(new Set<TreeSchema>([]));
-  const [showCheckBox, setShowCheckBox] = useState(false);
 
   useEffect(() => {
     setTree(treeContext.state.tree);
   }, [treeContext.state]);
 
-  function addNode(
-    id: string,
-    props: { node?: TreeSchema; nodes?: TreeSchema[] }
-  ) {
+  function addNode(id: string, props: { node?: TreeSchema; nodes?: Children }) {
     let newTree: TreeSchema;
     if (props.node) {
       newTree = bfs(id, tree, props.node);
@@ -72,52 +64,29 @@ export const Index = () => {
   const RenderCustomNode: RenderCustomNodeElementFn = ({ nodeDatum }) => {
     return (
       <>
-        {showCheckBox && (
-          <foreignObject
-            x="-13"
-            y="-60"
-            width="200px"
-            height="40px"
-            style={{ padding: '5px' }}
-          >
-            <Checkbox
-              m="auto"
-              size="lg"
-              onChange={(e) => {
-                const currentNode = nodeDatum as unknown as TreeSchema;
-                if (e.target.checked) {
-                  collection.add(currentNode);
-                  setCollection(new Set(collection));
-                } else {
-                  if (collection.has(currentNode)) {
-                    collection.delete(currentNode);
-                  }
-                }
-              }}
-            />
-          </foreignObject>
-        )}
-
         <circle
-          r="25"
-          color=""
-          stroke="none"
-          fill="var(--chakra-colors-green-500)"
+          r='25'
+          color=''
+          stroke='none'
+          fill='var(--chakra-colors-green-500)'
           style={{
             stroke: 'none',
           }}
           onClick={() => {
-            setNode(nodeDatum);
+            if (('children' in nodeDatum) as unknown as Children) {
+              setNode(nodeDatum);
+            }
           }}
         />
-        <foreignObject x="10" y="10" width="150px" height="25px">
-          <Text textAlign="left" fontWeight="semibold" marginLeft="10px">
+        <foreignObject x='10' y='10' width='150px' height='25px'>
+          <Text textAlign='left' fontWeight='semibold' marginLeft='10px'>
             {nodeDatum.name}
           </Text>
         </foreignObject>
-        {!showCheckBox && (
-          <foreignObject x="10" y="30" width="150px" height="50px">
-            <ButtonGroup alignSelf="center" size="sm" margin="10px 10px">
+
+        <foreignObject x='10' y='30' width='150px' height='50px'>
+          <ButtonGroup alignSelf='center' size='sm' margin='10px 10px'>
+            {(('children' in nodeDatum) as unknown as Children) && (
               <Button
                 onClick={() => {
                   setNodeId((nodeDatum as unknown as TreeSchema).id);
@@ -125,28 +94,28 @@ export const Index = () => {
               >
                 Add
               </Button>
-              {Boolean((nodeDatum as unknown as TreeSchema).parent) && (
-                <Button
-                  onClick={() => {
-                    deleteNode(nodeDatum as unknown as TreeSchema);
-                  }}
-                  color="red.600"
-                >
-                  Delete
-                </Button>
-              )}
-            </ButtonGroup>
-          </foreignObject>
-        )}
+            )}
+
+            {Boolean((nodeDatum as unknown as TreeSchema).parent) && (
+              <Button
+                onClick={() => {
+                  deleteNode(nodeDatum as unknown as TreeSchema);
+                }}
+                color='red.600'
+              >
+                Delete
+              </Button>
+            )}
+          </ButtonGroup>
+        </foreignObject>
       </>
     );
   };
 
   return (
-    <Box w="100%" h="100vh">
-      <MenuComponent tree={tree} showCheckBox={() => setShowCheckBox(true)} />
-      <CollectionMenu />
-      <TreeMenu />
+    <Box w='100%' h='100vh'>
+      <MenuComponent tree={tree} />
+
       <Tree
         data={tree as unknown as RawNodeDatum[]}
         renderCustomNodeElement={RenderCustomNode}
@@ -175,11 +144,6 @@ export const Index = () => {
         addNodeMethod={(props) => {
           if (nodeId) addNode(nodeId, props);
         }}
-      />
-      <Collection
-        isOpen={showCheckBox}
-        onCancel={() => setShowCheckBox(false)}
-        collection={collection}
       />
     </Box>
   );
