@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { z } from 'zod';
+import { TreeSchema } from '../../types/TreeTypes';
 import { TreeCollection } from '../zodObj/TreeObjs';
 
 export const createNewTree = async (treeName: string) => {
@@ -40,7 +41,7 @@ export const deleteTreeById = async (id: string) => {
 };
 
 export const changeTreeName = async (_id: string, treeName: string) => {
-  await axios.post('/api/change-name', {
+  await axios.post('/api/update-tree', {
     _id,
     treeName,
   });
