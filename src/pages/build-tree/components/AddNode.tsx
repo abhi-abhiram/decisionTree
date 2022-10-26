@@ -7,9 +7,6 @@ import {
   DrawerHeader,
   DrawerBody,
   Stack,
-  FormLabel,
-  Select,
-  FormControl,
   Heading,
   Divider,
   Modal,
@@ -22,15 +19,18 @@ import {
   Checkbox,
 } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
-import { useRef, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Children, Collection, TreeSchema } from '../../../../types/TreeTypes';
 import { getCollections } from '../../../api/collectionApis';
 import { getTreeById, getTreesNames } from '../../../api/manageTreeApis';
+import { SearchBar } from '../../../components';
+import { getValue } from '../../../components/SearchBar';
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
   addNodeMethod: (props: { node?: TreeSchema; nodes?: Children }) => void;
+  addParent: () => void;
 }
 
 const OR = () => {
@@ -45,16 +45,27 @@ const OR = () => {
   );
 };
 
-const AddNode: React.FC<Props> = ({ isOpen, onClose, addNodeMethod }) => {
+const AddNode: React.FC<Props> = ({
+  isOpen,
+  onClose,
+  addNodeMethod,
+  addParent,
+}) => {
   const { data } = useQuery(['get-tree-names'], getTreesNames);
   const { data: collections } = useQuery(['get-collections'], getCollections);
-  const SelectBuildNode = useRef<HTMLSelectElement>(null);
-  const SelectCollectionNode = useRef<HTMLSelectElement>(null);
   const [nodeLoading, setNodeLoading] = useState({
     preBuildNode: false,
     collectionNode: false,
   });
   const [showCollection, setShowCollection] = useState(false);
+  const treesSearchData = useMemo(() => {
+    return data?.map(({ _id, treeName }) => {
+      return {
+        _id,
+        name: treeName,
+      };
+    });
+  }, [data]);
 
   return (
     <>
@@ -80,21 +91,10 @@ const AddNode: React.FC<Props> = ({ isOpen, onClose, addNodeMethod }) => {
 
               <OR />
 
-              <FormControl>
-                <FormLabel htmlFor='url'>Select Build Node</FormLabel>
-                <Select ref={SelectBuildNode}>
-                  {data?.map((values, index) => {
-                    return (
-                      <option value={values._id} key={index}>
-                        {values.treeName}
-                      </option>
-                    );
-                  })}
-                </Select>
-              </FormControl>
+              <SearchBar elements={treesSearchData ? treesSearchData : []} />
               <Button
                 onClick={() => {
-                  const value = SelectBuildNode.current?.value;
+                  const value = getValue();
                   if (value) {
                     setNodeLoading({ ...nodeLoading, preBuildNode: true });
                     getTreeById(value).then((value) => {
@@ -114,23 +114,11 @@ const AddNode: React.FC<Props> = ({ isOpen, onClose, addNodeMethod }) => {
 
               <OR />
 
-              <FormControl>
-                <FormLabel htmlFor='owner'>
-                  Select Node from Collection
-                </FormLabel>
-                <Select ref={SelectCollectionNode}>
-                  {collections?.map((value, index) => {
-                    return (
-                      <option value={value._id} key={index}>
-                        {value.name}
-                      </option>
-                    );
-                  })}
-                </Select>
-              </FormControl>
+              <SearchBar elements={collections ? collections : []} />
               <Button
                 onClick={() => {
-                  const id = SelectCollectionNode.current?.value;
+                  const id = getValue();
+
                   if (id) {
                     setShowCollection(true);
                   }
@@ -142,16 +130,24 @@ const AddNode: React.FC<Props> = ({ isOpen, onClose, addNodeMethod }) => {
               >
                 Add Node
               </Button>
+
+              <OR />
+
+              <Button
+                isDisabled={Boolean(
+                  nodeLoading.collectionNode || nodeLoading.preBuildNode
+                )}
+                onClick={addParent}
+              >
+                Add Parent Node
+              </Button>
             </Stack>
           </DrawerBody>
         </DrawerContent>
       </Drawer>
 
       <SelectNodes
-        collection={getCollection(
-          SelectCollectionNode.current?.value,
-          collections
-        )}
+        collection={getCollection(getValue(), collections)}
         isOpen={showCollection}
         onClose={() => {
           setShowCollection(false);
@@ -159,8 +155,9 @@ const AddNode: React.FC<Props> = ({ isOpen, onClose, addNodeMethod }) => {
         }}
         onAdd={(ids) => {
           const collection = collections?.find((value) => {
-            return value._id === SelectCollectionNode.current?.value;
+            return value._id === getValue();
           });
+
           const nodes: Children = [];
 
           collection?.nodes.forEach((value) => {
@@ -171,6 +168,7 @@ const AddNode: React.FC<Props> = ({ isOpen, onClose, addNodeMethod }) => {
               });
             }
           });
+
           addNodeMethod({
             nodes: nodes,
           });

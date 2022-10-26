@@ -96,6 +96,7 @@ export function editBfs(id: string, node: TreeSchema, tree: TreeSchema) {
         value.parent = { id: curNode.id };
       });
       curNode.imgUrl = node.imgUrl;
+      curNode.helpText = node.helpText;
     }
 
     if ('children' in curNode) {
@@ -126,5 +127,54 @@ export function changeIds(tree: TreeSchema): TreeSchema {
     }
   }
 
+  return { ...tree };
+}
+
+export function getNode(id: string, tree: TreeSchema): TreeSchema | undefined {
+  const queue: TreeSchema[] = [];
+  queue.unshift(tree);
+  while (queue.length > 0) {
+    const curNode = queue.pop() as TreeSchema;
+
+    if (curNode.id === id) {
+      return curNode;
+    }
+
+    if ('children' in curNode) {
+      const len = curNode.children.length;
+      for (let i = 0; i < len; i++) {
+        queue.unshift(curNode.children[i] as TreeSchema);
+      }
+    }
+  }
+}
+
+export function addParent(
+  id: string,
+  tree: TreeSchema,
+  newNode: TreeSchema
+): TreeSchema {
+  const queue: TreeSchema[] = [];
+  queue.unshift(tree);
+
+  while (queue.length > 0) {
+    const curNode = queue.pop() as TreeSchema;
+
+    if ('children' in curNode) {
+      const len = curNode.children.length;
+      for (let i = 0; i < len; i++) {
+        const child = curNode.children[i];
+        if (child.id === id) {
+          if (child.parent) {
+            child.parent = { id: newNode.id };
+          }
+          newNode.children.push(child);
+          curNode.children[i] = newNode;
+          return { ...tree };
+        }
+        queue.unshift(child as TreeSchema);
+      }
+    }
+  }
   return { ...tree };
 }

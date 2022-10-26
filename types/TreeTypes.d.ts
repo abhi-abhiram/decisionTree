@@ -24,6 +24,7 @@ export interface TreeSchema {
   url?: string;
   parent?: { id: string };
   imgUrl?: string;
+  helpText?: string;
 }
 
 export type TreeCollection = {

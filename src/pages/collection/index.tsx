@@ -45,6 +45,10 @@ const SearchNodes: React.FC<Props> = ({ data }) => {
   };
   const [listref] = useAutoAnimate<HTMLDivElement>();
   const nagivateTo = useNavigate();
+  const searchBgcolor = useColorModeValue(
+    'var(--chakra-colors-gray-100)',
+    'var(--chakra-colors-gray-800)'
+  );
 
   return (
     <Box
@@ -77,7 +81,7 @@ const SearchNodes: React.FC<Props> = ({ data }) => {
             borderBottomRadius={10}
             pt={3}
             pb={3}
-            background='#1A202C'
+            background={searchBgcolor}
             zIndex={2}
             opacity={1}
           >
@@ -85,7 +89,7 @@ const SearchNodes: React.FC<Props> = ({ data }) => {
               <ListItem
                 css={{
                   ':hover': {
-                    backgroundColor: '#2D3748',
+                    backgroundColor: 'var(--chakra-colors-gray-500)',
                     cursor: 'pointer',
                   },
                 }}

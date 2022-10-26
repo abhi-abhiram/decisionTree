@@ -38,3 +38,16 @@ export const getTreeById = async (id: string) => {
 export const deleteTreeById = async (id: string) => {
   await axios.post('/api/delete-tree', { _id: id });
 };
+
+export const changeTreeName = async (_id: string, treeName: string) => {
+  await axios.post('/api/change-name', {
+    _id,
+    treeName,
+  });
+};
+
+export const cloneTree = async (_id: string) => {
+  await axios.post('/api/clone-tree', {
+    _id,
+  });
+};

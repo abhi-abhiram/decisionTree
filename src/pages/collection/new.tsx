@@ -78,7 +78,7 @@ const NewCollection = () => {
               />
             </Box>
           ))}
-          <Stack spacing='6' position='absolute' bottom='30px' w='100%'>
+          <Stack spacing='6' bottom='30px' w='100%'>
             <Button
               onClick={() => {
                 const name = inputRef.current?.value;

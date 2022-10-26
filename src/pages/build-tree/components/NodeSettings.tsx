@@ -23,6 +23,7 @@ import FormSelect from '../../../components/FormikComponents/FormSelect';
 import { AnswersObj, TreeSchema } from '../../../../types/TreeTypes';
 import { AnswerFields, AnswerFieldsZodObj } from '../../../zodObj/TreeObjs';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
+import { FormTextarea } from '../../../components/FormikComponents';
 
 type Props = {
   currentNode: TreeSchema;
@@ -47,6 +48,7 @@ const NodeDataSchema = z.object({
     .optional(),
   url: z.string().optional(),
   imgUrl: z.string().optional(),
+  helpText: z.string().optional(),
 });
 
 type FormSchema = z.infer<typeof NodeDataSchema>;
@@ -58,6 +60,7 @@ const initialValues: FormSchema = {
   answers: [{ answerValue: '', childId: '' }],
   url: '',
   imgUrl: '',
+  helpText: '',
 };
 
 const AnswersField = ({ node }: { node: TreeSchema }) => {
@@ -135,6 +138,7 @@ const NodeSettings = ({
         answers: currentNode.answers,
         url: currentNode.url,
         imgUrl: currentNode.imgUrl,
+        helpText: currentNode.helpText,
       };
     } else {
       return initialValues;
@@ -156,6 +160,7 @@ const NodeSettings = ({
               } catch (error) {
                 console.error(error);
               }
+
               setSubmitting(false);
               onSubmit();
             }}
@@ -177,6 +182,10 @@ const NodeSettings = ({
                       <FormInput name='url' placeholder='URL' />
                     )}
                     <FormInput name='imgUrl' placeholder='Enter Image Url' />
+                    <FormTextarea
+                      name='helpText'
+                      placeholder='Enter help text here'
+                    />
                     <AnswersField node={currentNode} />
                     <Button
                       disabled={isSubmitting}
@@ -210,6 +219,7 @@ function mapFormValueToTreeSchema(
     answers: values.answers,
     url: values.url,
     imgUrl: values.imgUrl,
+    helpText: values.helpText,
   };
 }
 

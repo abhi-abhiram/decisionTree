@@ -111,7 +111,7 @@ const NewCollection = () => {
               <Spinner />
             </Center>
           )}
-          <Stack spacing='6' position='absolute' bottom='30px' w='100%'>
+          <Stack spacing='6' bottom='30px' w='100%'>
             <ButtonGroup w='100%'>
               <Button
                 onClick={() => {
@@ -185,6 +185,10 @@ const SearchNodes: React.FC<Props> = ({ onClickItem, data }) => {
     base: 'none',
     sm: useColorModeValue('md', 'dark-lg'),
   };
+  const searchBgcolor = useColorModeValue(
+    'var(--chakra-colors-gray-100)',
+    'var(--chakra-colors-gray-700)'
+  );
 
   const [listref] = useAutoAnimate<HTMLDivElement>();
   return (
@@ -218,7 +222,7 @@ const SearchNodes: React.FC<Props> = ({ onClickItem, data }) => {
             borderBottomRadius={10}
             pt={3}
             pb={3}
-            background='#1A202C'
+            background={searchBgcolor}
             zIndex={2}
             opacity={1}
           >
@@ -226,7 +230,7 @@ const SearchNodes: React.FC<Props> = ({ onClickItem, data }) => {
               <ListItem
                 css={{
                   ':hover': {
-                    backgroundColor: '#2D3748',
+                    backgroundColor: 'var(--chakra-colors-gray-500)',
                     cursor: 'pointer',
                   },
                 }}

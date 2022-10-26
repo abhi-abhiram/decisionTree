@@ -9,7 +9,6 @@ export default async function getWholeTree(tree: TreeSchema) {
     const curNode = queue.pop() as TreeSchema;
     const len = curNode.children.length;
 
-    console.log(len);
     for (let i = 0; i < len; i++) {
       if (!('children' in curNode.children[i])) {
         const id = curNode.children[i].id;

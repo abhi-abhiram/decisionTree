@@ -9,6 +9,7 @@ import { v4 } from 'uuid';
 import NodeSettings from './components/NodeSettings';
 import {
   addMultipleChilds,
+  addParent,
   bfs,
   deleteBfs,
   editBfs,
@@ -58,6 +59,23 @@ export const Index = () => {
 
   function editNode(node: TreeSchema) {
     const newTree = editBfs(node.id, node, tree);
+    setTree(newTree);
+  }
+
+  function addParentNode(id: string) {
+    let newTree: TreeSchema;
+    const newNodeData: TreeSchema = {
+      name: '',
+      answerFieldType: 'InputBox',
+      id: v4(),
+      question: '',
+      answers: [],
+      children: [],
+      url: '',
+      imgUrl: '',
+    };
+    newTree = addParent(id, tree, newNodeData);
+    setNode(newNodeData);
     setTree(newTree);
   }
 
@@ -115,7 +133,6 @@ export const Index = () => {
   return (
     <Box w='100%' h='100vh'>
       <MenuComponent tree={tree} />
-
       <Tree
         data={tree as unknown as RawNodeDatum[]}
         renderCustomNodeElement={RenderCustomNode}
@@ -143,6 +160,9 @@ export const Index = () => {
         onClose={() => setNodeId(undefined)}
         addNodeMethod={(props) => {
           if (nodeId) addNode(nodeId, props);
+        }}
+        addParent={() => {
+          if (nodeId) addParentNode(nodeId);
         }}
       />
     </Box>

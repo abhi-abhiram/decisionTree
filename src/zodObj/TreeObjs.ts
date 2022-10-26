@@ -36,6 +36,7 @@ export const TreeZodObj: z.ZodType<TreeSchema> = z.lazy(() =>
     url: z.string().optional(),
     parent: z.object({ id: z.string() }).optional(),
     imgUrl: z.string().optional(),
+    helpText: z.string().optional(),
   })
 );
 

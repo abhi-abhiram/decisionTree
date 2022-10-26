@@ -19,6 +19,7 @@ export default async function getData(req: VercelRequest, res: VercelResponse) {
       children: [],
       url: '',
       imgUrl: '',
+      helpText: '',
     },
     isCollection: false,
   };

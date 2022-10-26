@@ -16,6 +16,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useState, useEffect, useContext } from 'react';
 import { z } from 'zod';
 import {
+  cloneTree,
   deleteTreeById,
   getTreeById,
   getTreesNames,
@@ -155,6 +156,7 @@ const CustomTable = () => {
                 <Th textAlign='center'></Th>
                 <Th textAlign='center'></Th>
                 <Th textAlign='center'></Th>
+                <Th textAlign='center'></Th>
               </Tr>
             </Thead>
             <Tbody>
@@ -174,6 +176,9 @@ const CustomTable = () => {
                       return getTreeById(value._id).then((value) =>
                         treeContext?.dispatch({ type: 'set', payload: value })
                       );
+                    }}
+                    onClickCloneBtn={async () => {
+                      return cloneTree(value._id);
                     }}
                     value={value}
                   />

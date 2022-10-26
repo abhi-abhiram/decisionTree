@@ -1,4 +1,15 @@
-import { Center, VStack, Button, Spinner } from '@chakra-ui/react';
+import {
+  Center,
+  VStack,
+  Button,
+  Spinner,
+  Drawer,
+  DrawerBody,
+  DrawerCloseButton,
+  DrawerContent,
+  DrawerHeader,
+  DrawerOverlay,
+} from '@chakra-ui/react';
 import { useContext, useEffect, useState } from 'react';
 import { FieldArray, Form, Formik } from 'formik';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
@@ -34,6 +45,7 @@ const QuesAnsArray = ({
   const [isTreeEnded, setIsTreeEnded] = useState(false);
   const [listref] = useAutoAnimate<HTMLDivElement>();
   const [loading, setLoading] = useState(false);
+  const [showHelpPanel, setHelpPanel] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -49,7 +61,7 @@ const QuesAnsArray = ({
   return (
     <>
       {!loading && (
-        <VStack w='50%' ref={listref}>
+        <VStack w='70%' ref={listref}>
           <FieldArray name='values'>
             {({ push, remove, pop, form }) => {
               const isError = Boolean(
@@ -64,6 +76,7 @@ const QuesAnsArray = ({
                         node={value}
                         key={value.id}
                         isDisabled={Boolean(index !== nodesQueue.length - 1)}
+                        openHelpPanel={() => setHelpPanel(true)}
                       />
                     );
                   })}
@@ -105,6 +118,21 @@ const QuesAnsArray = ({
         </VStack>
       )}
       {loading && <Spinner />}
+      <Drawer
+        onClose={() => setHelpPanel(false)}
+        isOpen={showHelpPanel}
+        size={'lg'}
+        placement={'left'}
+      >
+        <DrawerOverlay />
+        <DrawerContent>
+          <DrawerCloseButton />
+          <DrawerHeader>help Panel</DrawerHeader>
+          <DrawerBody>
+            <p>{nodesQueue[nodesQueue.length - 1]?.helpText}</p>
+          </DrawerBody>
+        </DrawerContent>
+      </Drawer>
     </>
   );
 };
