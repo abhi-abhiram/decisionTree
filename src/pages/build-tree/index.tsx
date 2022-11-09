@@ -47,6 +47,7 @@ export const Index = () => {
         imgUrl: '',
       };
       newTree = bfs(id, tree, newNodeData);
+
       setNode(newNodeData);
     }
     setTree(newTree);
@@ -73,6 +74,7 @@ export const Index = () => {
       children: [],
       url: '',
       imgUrl: '',
+      parent: { id: '' },
     };
     newTree = addParent(id, tree, newNodeData);
     setNode(newNodeData);

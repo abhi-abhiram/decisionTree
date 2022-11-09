@@ -165,6 +165,9 @@ export function addParent(
       for (let i = 0; i < len; i++) {
         const child = curNode.children[i];
         if (child.id === id) {
+          if (newNode.parent && child.parent) {
+            newNode.parent.id = child.parent?.id;
+          }
           if (child.parent) {
             child.parent = { id: newNode.id };
           }
