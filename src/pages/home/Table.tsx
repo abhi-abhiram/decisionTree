@@ -23,6 +23,7 @@ import {
   TreeNamesZodObj,
 } from '../../api/manageTreeApis';
 import { TreeContext } from '../../context/TreeContext';
+import ChangeNameAlert from './ChangeNameAlert';
 import DeleteAlert from './DeleteAlert';
 import TableRow from './TableRow';
 
@@ -104,7 +105,11 @@ const Search: React.FC<SearchProps<z.infer<typeof TreeNamesZodObj>>> = ({
 const CustomTable = () => {
   const treeContext = useContext(TreeContext);
   const [deleteIndex, setDeleteIndex] = useState<number | undefined>();
-  const { data, isLoading } = useQuery(['get-all-tree-names'], getTreesNames);
+  const { data, isLoading, refetch } = useQuery(
+    ['get-all-tree-names'],
+    getTreesNames
+  );
+  const [showNameChangePrompt, setPrompt] = useState('');
 
   const [filteredData, setFilteredData] = useState<
     z.infer<typeof TreeNamesZodObj>
@@ -181,6 +186,7 @@ const CustomTable = () => {
                       return cloneTree(value._id);
                     }}
                     value={value}
+                    onClickEditName={(id) => setPrompt(id)}
                   />
                 );
               })}
@@ -198,6 +204,11 @@ const CustomTable = () => {
         }}
         isOpen={Boolean(deleteIndex || deleteIndex === 0)}
         onClose={onClose}
+      />
+      <ChangeNameAlert
+        isOpen={showNameChangePrompt}
+        onClose={() => setPrompt('')}
+        onSubmit={() => refetch()}
       />
       {isLoading && (
         <Center w='100%' h='80vh'>

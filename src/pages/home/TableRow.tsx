@@ -4,17 +4,10 @@ import {
   DeleteIcon,
   CopyIcon,
 } from '@chakra-ui/icons';
-import {
-  Tr,
-  Td,
-  Editable,
-  EditableInput,
-  EditablePreview,
-} from '@chakra-ui/react';
+import { Tr, Td, Text, Flex, IconButton } from '@chakra-ui/react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CustomButton } from '.';
-import { changeTreeName } from '../../api/manageTreeApis';
 
 interface Props {
   value: {
@@ -28,9 +21,10 @@ interface Props {
   onClickDeleteBtn: () => Promise<void>;
   onClickQuesBtn: () => Promise<void>;
   onClickCloneBtn: () => Promise<void>;
+  onClickEditName: (id: string) => void;
 }
 
-const TableRow: React.FC<Props> = ({ value, ...props }) => {
+const TableRow = ({ value, ...props }: Props) => {
   const [isLoading, setLoading] = useState({
     isLoadingEditBtn: false,
     isLoadingQuesBtn: false,
@@ -41,16 +35,16 @@ const TableRow: React.FC<Props> = ({ value, ...props }) => {
   return (
     <Tr>
       <Td textAlign='center'>
-        <Editable defaultValue={value.treeName}>
-          <EditablePreview />
-          <EditableInput
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                changeTreeName(value._id, e.currentTarget.value);
-              }
-            }}
-          />
-        </Editable>
+        <Flex m='auto' width='fit-content'>
+          <Text>{value.treeName}</Text>
+          <Flex
+            justifyContent='center'
+            ml='2'
+            onClick={() => props.onClickEditName(value._id)}
+          >
+            <IconButton aria-label='edit' size='xs' icon={<EditIcon />} />
+          </Flex>
+        </Flex>
       </Td>
       <Td textAlign='center'>{new Date(value.createdAt).toDateString()}</Td>
       <Td textAlign='center'>{new Date(value.updatedAt).toDateString()}</Td>
