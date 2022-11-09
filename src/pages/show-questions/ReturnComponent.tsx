@@ -51,6 +51,14 @@ export const Component: React.FC<Props> = ({
     case 'MultipleChoice':
       return (
         <Box w='100%' display='flex' alignItems='center' p={2}>
+          {node.helpText && !isDisabled && (
+            <Box display='flex' minH={'100px'}>
+              <Button alignSelf={'center'} onClick={openHelpPanel} size={'sm'}>
+                Show Help Panel
+              </Button>
+              <Divider orientation='vertical' h='auto' m='0 3rem' />
+            </Box>
+          )}
           <FromSelect
             name={`values[${index}].answer`}
             label={node.question}
@@ -76,6 +84,14 @@ export const Component: React.FC<Props> = ({
     case 'Textarea':
       return (
         <Box w='100%' display='flex' alignItems='center' p={2}>
+          {node.helpText && !isDisabled && (
+            <Box display='flex' minH={'100px'}>
+              <Button alignSelf={'center'} onClick={openHelpPanel} size={'sm'}>
+                Show Help Panel
+              </Button>
+              <Divider orientation='vertical' h='auto' m='0 3rem' />
+            </Box>
+          )}
           <FormTextarea
             name={`values[${index}].answer`}
             label={node.question}
