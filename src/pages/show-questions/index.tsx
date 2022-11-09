@@ -9,6 +9,12 @@ import {
   DrawerContent,
   DrawerHeader,
   DrawerOverlay,
+  Heading,
+  Text,
+  UnorderedList,
+  OrderedList,
+  ListItem,
+  Divider,
 } from '@chakra-ui/react';
 import { useContext, useEffect, useState } from 'react';
 import { FieldArray, Form, Formik } from 'formik';
@@ -22,6 +28,7 @@ import { getChild } from './SelectNode';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
 import getWholeTree from '../../utils/getTree';
 import { saveAs } from 'file-saver';
+import Markdown from 'markdown-to-jsx';
 
 let lastKey = 0;
 
@@ -55,8 +62,13 @@ const QuesAnsArray = ({
         setLoading(false);
         return setNodeQueue([value as TreeSchema]);
       })
-      .catch((error) => console.log(error));
+      .catch((error) => console.error(error));
   }, [treecontext.state.tree]);
+
+  let helptext: string | undefined;
+  if (nodesQueue.length && nodesQueue[nodesQueue.length - 1].helpText) {
+    helptext = nodesQueue[nodesQueue.length - 1].helpText;
+  }
 
   return (
     <>
@@ -129,7 +141,96 @@ const QuesAnsArray = ({
           <DrawerCloseButton />
           <DrawerHeader>help Panel</DrawerHeader>
           <DrawerBody>
-            <p>{nodesQueue[nodesQueue.length - 1]?.helpText}</p>
+            <Markdown
+              options={{
+                overrides: {
+                  h1: {
+                    component: Heading,
+                    props: {
+                      as: 'h1',
+                      size: '3xl',
+                    },
+                  },
+                  h2: {
+                    component: Heading,
+                    props: {
+                      as: 'h2',
+                      size: '2xl',
+                    },
+                  },
+                  h3: {
+                    component: Heading,
+                    props: {
+                      as: 'h3',
+                      size: 'xl',
+                    },
+                  },
+                  h4: {
+                    component: Heading,
+                    props: {
+                      as: 'h4',
+                      size: 'lg',
+                    },
+                  },
+                  h5: {
+                    component: Heading,
+                    props: {
+                      as: 'h5',
+                      size: 'md',
+                    },
+                  },
+                  h6: {
+                    component: Heading,
+
+                    props: {
+                      as: 'h6',
+                      size: 'sm',
+                    },
+                  },
+                  p: {
+                    component: Text,
+                  },
+                  strong: {
+                    component: Text,
+                    props: {
+                      as: 'b',
+                    },
+                  },
+                  em: {
+                    component: Text,
+                    props: {
+                      as: 'em',
+                    },
+                  },
+                  i: {
+                    component: Text,
+                    props: {
+                      as: 'i',
+                    },
+                  },
+                  u: {
+                    component: Text,
+                    props: {
+                      as: 'u',
+                    },
+                  },
+                  ul: {
+                    component: UnorderedList,
+                  },
+                  li: {
+                    component: ListItem,
+                  },
+                  ol: {
+                    component: OrderedList,
+                  },
+                  hr: {
+                    component: Divider,
+                  },
+                },
+              }}
+            >
+              {helptext ? helptext : ''}
+            </Markdown>
           </DrawerBody>
         </DrawerContent>
       </Drawer>

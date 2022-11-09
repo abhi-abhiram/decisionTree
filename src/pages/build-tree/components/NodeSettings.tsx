@@ -12,18 +12,19 @@ import {
   ModalContent,
   ModalHeader,
   ModalOverlay,
+  Input,
 } from '@chakra-ui/react';
 import { Formik, Form, FieldArray } from 'formik';
-import { useMemo } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
-import { AddIcon, MinusIcon } from '@chakra-ui/icons';
+import { AddIcon, CheckIcon, MinusIcon } from '@chakra-ui/icons';
 import { z } from 'zod';
 import FormInput from '../../../components/FormikComponents/FormInput';
 import FormSelect from '../../../components/FormikComponents/FormSelect';
 import { AnswersObj, TreeSchema } from '../../../../types/TreeTypes';
 import { AnswerFields, AnswerFieldsZodObj } from '../../../zodObj/TreeObjs';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
-import { FormTextarea } from '../../../components/FormikComponents';
+import { IconCloudUpload } from '@tabler/icons';
 
 type Props = {
   currentNode: TreeSchema;
@@ -145,6 +146,9 @@ const NodeSettings = ({
     }
   }, [currentNode, isOpen]);
 
+  const uploadInputRef = useRef<HTMLInputElement>(null);
+  const [isUploading, setUploading] = useState(false);
+
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
@@ -166,7 +170,7 @@ const NodeSettings = ({
             }}
             validationSchema={toFormikValidationSchema(NodeDataSchema)}
           >
-            {({ values, isSubmitting, errors }) => {
+            {({ values, isSubmitting, setFieldValue }) => {
               return (
                 <Form>
                   <VStack>
@@ -182,10 +186,30 @@ const NodeSettings = ({
                       <FormInput name='url' placeholder='URL' />
                     )}
                     <FormInput name='imgUrl' placeholder='Enter Image Url' />
-                    <FormTextarea
-                      name='helpText'
-                      placeholder='Enter help text here'
+                    <Input
+                      type='file'
+                      ref={uploadInputRef}
+                      onChange={(e) => {
+                        setUploading(true);
+                        if (e.target.files) {
+                          e.target.files[0].text().then((value) => {
+                            setFieldValue('helpText', value);
+                            setUploading(false);
+                          });
+                        }
+                      }}
+                      hidden
                     />
+                    <Button
+                      leftIcon={
+                        values.helpText ? <CheckIcon /> : <IconCloudUpload />
+                      }
+                      w='100%'
+                      onClick={() => uploadInputRef.current?.click()}
+                      isLoading={isUploading}
+                    >
+                      {values.helpText ? 'Change file' : 'Select a file'}
+                    </Button>
                     <AnswersField node={currentNode} />
                     <Button
                       disabled={isSubmitting}
